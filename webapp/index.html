@@ -1,0 +1,54 @@
+<title>ASIN browser</title>
+<link rel="stylesheet" href="bootstrap.min.css">
+
+<div class="card">
+
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" href="#retail-prod">Retail Prod</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#retail-devo">Retail Devo</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#3p-devo">3P Devo</a>
+        </li>
+    </ul>
+
+    <div class="card-body" id="app">
+        <div class="form-group">
+            <input class="form-control" placeholder="Type text..." v-model="filter" v-on:input="oninput" autofocus>
+        </div>
+        <details>
+            <summary>Select columns</summary>
+            <div class="columns">
+                <div class="form-check form-check-inline" v-for="column in columns">
+                <label class="form-check-label">
+                    <input class="form-check-input" type="checkbox" v-bind:value="column" v-model="selectedColumns">
+                    {{ column }}
+                </label>
+                </div>
+            </div>
+        </details>
+        <table class="table table-hover">
+            <thead class="thead-default">
+                <tr>
+                    <th>#</th>
+                    <th v-for="column in selectedColumns">{{ column }}</th>
+                </tr>
+            </thead>
+            <tr v-for="(asin, index) in asins">
+                <th>{{ index + 1 }}</th>
+                <td v-for="column in selectedColumns">
+                    <template v-if="column == 'asin'">
+                        <a v-bind:href="host + asin[column]">{{ asin[column] }}</a>
+                    </template>
+                    <template v-else>{{ asin[column] }}</template>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<script src="vue.min.js"></script>
+<script src="main.js"></script>
