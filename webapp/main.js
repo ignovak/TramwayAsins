@@ -1,13 +1,14 @@
 const selectedColumns = new Set(
     JSON.parse(
-        localStorage.columns || '["asin","contribution/creationDate","contribution/glType","item/binding","item/brandName","item/productType","listing/price/amount","title"]'
+        localStorage.columns || '["asin","contribution/creationDate","contribution/glType","item/binding","item/brandName","item/productType", "listing/availability/quantity", "listing/price/amount","title"]'
     )
 );
 
 const dataStorages = [
     'retail-prod',
     'retail-devo',
-    '3p-devo'
+    '3p-devo',
+    '3p-prod'
 ];
 
 let asins;
