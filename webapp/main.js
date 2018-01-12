@@ -36,14 +36,25 @@ if (!dataStorages.includes(dataStorage)) {
         }
     });
 
+const isDevo = location.hash.includes('devo');
+const retailMerchantId = isDevo ? 4105074442 : 14311485635;
+
 const app = new Vue({
   el: '#app',
   data: {
       columns: [],
-      host: location.hash.includes('devo') ? 'https://tr-development.amazon.com/dp/' : 'https://tr-pre-prod.amazon.com/dp/',
+      host: isDevo ? 'https://tr-development.amazon.com/dp/' : 'https://tr-pre-prod.amazon.com/dp/',
       selectedColumns: [],
       asins: [],
-      filter: ''
+      gls: [],
+      ptds: [],
+      filters: {
+        is3p: true,
+        isRetail: true,
+        gl: '',
+        ptd: '',
+        text: ''
+      }
   },
   watch: {
     selectedColumns: function () {
@@ -51,14 +62,31 @@ const app = new Vue({
     }
   },
   methods: {
-    oninput: function () {
-      this.asins = asins.filter(_ => {
-        return (_['title'] || '').toLowerCase().includes(this.filter)
-            || (_['contribution/glType'] || '').toLowerCase().includes(this.filter)
-      })
-    },
     update: function() {
-        this.asins = asins;
+      this.asins = asins.filter(_ => {
+        if (
+
+          (_['merchantId'] == retailMerchantId ? !this.filters.isRetail : !this.filters.is3p)
+
+          ||
+
+          this.filters.gl && _['contribution/glType'] != this.filters.gl
+
+          ||
+
+          this.filters.ptd && _['item/productType'] != this.filters.ptd
+
+          ||
+
+          this.filters.text
+              && !(_['title'] || '').toLowerCase().includes(this.filters.text)
+              && !(_['item/brandName'] || '').toLowerCase().includes(this.filters.text)
+
+          ) {
+          return false;
+        }
+        return true;
+      });
     }
   }
 });
@@ -73,29 +101,16 @@ new Promise(function(resolve, reject) {
         xhr.send();
     })
     .then(_ => {
-        const data = JSON.parse(_);
+        asins = JSON.parse(_).map(_ => flatten(_));
 
-        const columns = new Set();
-        data.forEach(_ => getKeys(_).forEach(_ => columns.add(_)));
-        app.columns = [...columns].sort();
+        app.gls = [...new Set(asins.map(_ => _['contribution/glType']))];
+        app.ptds = [...new Set(asins.map(_ => _['item/productType']))];
 
-        app.selectedColumns = app.columns.filter(_ => selectedColumns.has(_))
+        app.columns = [...new Set([].concat(...asins.map(_ => Object.keys(_))))].sort();
+        app.selectedColumns = app.columns.filter(_ => selectedColumns.has(_));
 
-        asins = data.map(_ => flatten(_));
         app.update();
     });
-
-function getKeys(node) {
-  const keys = [];
-  Object.entries(node).forEach(([key, value]) => {
-    if (typeof value == 'object') {
-      keys.push(...getKeys(value).map(_ => key + '/' + _));
-    } else {
-      keys.push(key);
-    }
-  });
-  return keys;
-}
 
 function flatten(node, prefix) {
   const result = {};
