@@ -6,11 +6,15 @@ const app = new Vue({
       columns: [],
       host: location.hash.includes('devo') ? 'https://tr-development.amazon.com/dp/' : 'https://tr-pre-prod.amazon.com/dp/',
       asins: [],
-      filters: []
+      filters: [],
+      gls: [],
+      gl: ''
   },
   methods: {
     update: function() {
-      this.asins = asins.filter(_ => this.filters.every(feature => _.features.has(feature)));
+      this.asins = asins
+        .filter(_ => this.filters.every(feature => _.features.has(feature)))
+        .filter(_ => this.gl == '' || _.gl == this.gl);
     }
   }
 });
@@ -34,6 +38,9 @@ new Promise(function(resolve, reject) {
         columns.delete('product-alert-grid');
         columns.delete('qpe-title-tag');
         app.columns = [...columns];
+
+        app.gls = [...new Set(data.map(_ => _.gl))]
+
         asins = data
             .map(_ => {
                 _.title = _.url.match(/\w+$/)[0];
