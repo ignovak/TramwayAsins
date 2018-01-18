@@ -9,7 +9,9 @@ const dataStoragesOld = [
 
 const dataStorages = [
     'asins-prod',
-    'asins-devo'
+    'asins-devo',
+    'features-prod',
+    'features-devo'
 ];
 
 let dataStorage = location.hash.slice(1);
@@ -109,17 +111,10 @@ const prodGLs = [
   'gl_home_entertainment'
 ];
 
-new Promise(function(resolve, reject) {
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', dataStorage + '.json', true);
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4)
-                resolve(xhr.responseText);
-        }
-        xhr.send();
-    })
+fetch(dataStorage + '.json')
+    .then(_ => _.json())
     .then(_ => {
-        asins = JSON.parse(_)
+        asins = _
           .filter(_ => prodGLs.includes(_.contribution.glType)) // TODO: move to data generation step
           .map(_ => flatten(_));
 
