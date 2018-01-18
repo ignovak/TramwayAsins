@@ -19,7 +19,7 @@ if (dataStoragesOld.includes(dataStorage)) {
 
 const selectedColumns = new Set(
     JSON.parse(
-        localStorage.columns || '["asin","contribution/creationDate","contribution/glType","item/binding","item/brandName","item/productType", "listing/availability/quantity", "listing/price/amount","title"]'
+        localStorage.columns || '["asin","contribution/glType","item/brandName","item/productType","title"]'
     )
 );
 
@@ -91,6 +91,24 @@ const app = new Vue({
   }
 });
 
+const prodGLs = [
+  'gl_camera',
+  'gl_electronics',
+  'gl_pc',
+  'gl_wireless',
+  'gl_home',
+  'gl_home_improvement',
+  'gl_kitchen',
+  'gl_sports',
+  'gl_office_product',
+  'gl_toy',
+  'gl_baby_product',
+  'gl_personal_care_appliances',
+  'gl_book',
+  'gl_videogames',
+  'gl_home_entertainment'
+];
+
 new Promise(function(resolve, reject) {
         const xhr = new XMLHttpRequest();
         xhr.open('GET', dataStorage + '.json', true);
@@ -101,10 +119,12 @@ new Promise(function(resolve, reject) {
         xhr.send();
     })
     .then(_ => {
-        asins = JSON.parse(_).map(_ => flatten(_));
+        asins = JSON.parse(_)
+          .filter(_ => prodGLs.includes(_.contribution.glType)) // TODO: move to data generation step
+          .map(_ => flatten(_));
 
-        app.gls = [...new Set(asins.map(_ => _['contribution/glType']))];
-        app.ptds = [...new Set(asins.map(_ => _['item/productType']))];
+        app.gls = [...new Set(asins.map(_ => _['contribution/glType']))].sort();
+        app.ptds = [...new Set(asins.map(_ => _['item/productType']))].sort();
 
         app.columns = [...new Set([].concat(...asins.map(_ => Object.keys(_))))].sort();
         app.selectedColumns = app.columns.filter(_ => selectedColumns.has(_));
