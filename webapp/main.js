@@ -188,7 +188,13 @@ fetch(dataStorage + '.json')
     .then(_ => _.json())
     .then(data => {
         data.forEach(_ => {
-          _.features = new Set(_.features.map(_ => _.replace('_feature_div', '')));
+          _.features = new Set(
+              _.features.map(
+                _ => _
+                    .replace('_feature_div', '')
+                    .replace(/.*product-description/, 'productDescription')
+              )
+            );
         });
         const columns = new Set([].concat(...data.map(_ => [..._.features])));
         columns.delete('hero-quick-promo-grid');
