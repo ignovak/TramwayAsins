@@ -1,5 +1,18 @@
 <title>ASIN browser</title>
 <link rel="stylesheet" href="bootstrap.min.css">
+<style>
+  .bg-success, .bg-warning {
+    opacity: .5;
+  }
+  .table label {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    white-space: nowrap;
+  }
+  #features-app label input {
+    transform: rotate(180deg) translate(5px);
+  }
+</style>
 
 <div class="card">
 
@@ -11,17 +24,14 @@
             <a class="nav-link" href="#asins-devo">Devo ASINs</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link active" href="#features-prod">Prod features</a>
+            <a class="nav-link" href="#features-prod">Prod features</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="#features-devo">Devo features</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="features.html">Features (new)</a>
-        </li>
     </ul>
 
-    <div class="card-body" id="app">
+    <div class="card-body" hidden id="asins-app">
         <div class="form-group bg-light p-3">
             <h5 class="card-subtitle">Filters</h5>
 
@@ -93,6 +103,49 @@
                         <a v-bind:href="host + asin[column]">{{ asin[column] }}</a>
                     </template>
                     <template v-else>{{ asin[column] }}</template>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="card-body" hidden id="features-app">
+        <div class="form-group bg-light p-3">
+            <h5 class="card-subtitle">Filters</h5>
+
+            <div class="form-group row">
+                <label for="gl-filter" class="col-3 col-form-label">Filter by GL</label>
+                <div class="col-9">
+                    <select class="custom-select" id="gl-filter" v-model="gl" v-on:change="update">
+                        <option selected></option>
+                        <option v-for="gl in gls" v-bind:value="gl">{{ gl }}</option>
+                    </select>
+                </div>
+            </div>
+
+        </div>
+
+        <table class="table table-hover table-bordered">
+            <thead class="thead-default text-capitalize">
+                <tr>
+                    <th>#</th>
+                    <th>ASIN</th>
+                    <th>GL</th>
+                    <th v-for="column in columns" class="text-center">
+                        <label>
+                            <input type="checkbox" v-bind:value="column" v-model="filters" v-on:change="update">
+                            {{ column }}
+                        </label>
+                    </th>
+
+                </tr>
+            </thead>
+            <tr v-for="(asin, index) in asins">
+                <th>{{ index + 1 }}</th>
+                <td><a v-bind:href="host + asin.title">{{ asin.title }}</a></td>
+                <td>{{ asin.gl }}</td>
+                <td
+                    v-for="column in columns"
+                    v-bind:class="{ 'bg-success': asin.features.has(column), 'bg-warning': !asin.features.has(column) }">
                 </td>
             </tr>
         </table>

@@ -41,8 +41,16 @@ if (!dataStorages.includes(dataStorage)) {
 const isDevo = location.hash.includes('devo');
 const retailMerchantId = isDevo ? 4105074442 : 14311485635;
 
+(function() {
+
+if (!dataStorage.includes('asins')) {
+  return;
+}
+
+document.querySelector('#asins-app').removeAttribute('hidden');
+
 const app = new Vue({
-  el: '#app',
+  el: '#asins-app',
   data: {
       columns: [],
       host: isDevo ? 'https://tr-development.amazon.com/dp/' : 'https://tr-pre-prod.amazon.com/dp/',
@@ -144,3 +152,58 @@ function flatten(node, prefix) {
   });
   return result;
 }
+
+})();
+
+(function() {
+
+if (!dataStorage.includes('features')) {
+  return;
+}
+
+document.querySelector('#features-app').removeAttribute('hidden');
+
+let asins;
+
+const app = new Vue({
+  el: '#features-app',
+  data: {
+      columns: [],
+      host: location.hash.includes('devo') ? 'https://tr-development.amazon.com/dp/' : 'https://tr-pre-prod.amazon.com/dp/',
+      asins: [],
+      filters: [],
+      gls: [],
+      gl: ''
+  },
+  methods: {
+    update: function() {
+      this.asins = asins
+        .filter(_ => this.filters.every(feature => _.features.has(feature)))
+        .filter(_ => this.gl == '' || _.gl == this.gl);
+    }
+  }
+});
+
+fetch(dataStorage + '.json')
+    .then(_ => _.json())
+    .then(data => {
+        data.forEach(_ => {
+          _.features = new Set(_.features.map(_ => _.replace('_feature_div', '')));
+        });
+        const columns = new Set([].concat(...data.map(_ => [..._.features])));
+        columns.delete('hero-quick-promo-grid');
+        columns.delete('product-alert-grid');
+        columns.delete('qpe-title-tag');
+        app.columns = [...columns];
+
+        app.gls = [...new Set(data.map(_ => _.gl))]
+
+        asins = data
+            .map(_ => {
+                _.title = _.url.match(/\w+$/)[0];
+                return _;
+            });
+        app.update();
+    });
+
+})();
