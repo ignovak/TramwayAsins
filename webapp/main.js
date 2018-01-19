@@ -119,8 +119,16 @@ const prodGLs = [
   'gl_home_entertainment'
 ];
 
-fetch(dataStorage + '.json')
-    .then(_ => _.json())
+new Promise(function(resolve, reject) {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', 'features.json', true);
+    xhr.open('GET', dataStorage + '.json', true);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4)
+        resolve(JSON.parse(xhr.responseText));
+    }
+    xhr.send();
+  })
     .then(_ => {
         asins = _
           .filter(_ => prodGLs.includes(_.contribution.glType)) // TODO: move to data generation step
@@ -184,8 +192,16 @@ const app = new Vue({
   }
 });
 
-fetch(dataStorage + '.json')
-    .then(_ => _.json())
+new Promise(function(resolve, reject) {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', 'features.json', true);
+    xhr.open('GET', dataStorage + '.json', true);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4)
+        resolve(JSON.parse(xhr.responseText));
+    }
+    xhr.send();
+  })
     .then(data => {
         data.forEach(_ => {
           _.features = new Set(
