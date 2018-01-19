@@ -1,5 +1,11 @@
 addEventListener('hashchange', _ => location.reload());
 
+const selectedColumns = new Set(
+    JSON.parse(
+        localStorage.columns || '["asin","glType","brandName","productType","title"]'
+    ).map(_ => _.replace(/.*\//, ''))
+);
+
 const dataStoragesOld = [
     'retail-prod',
     'retail-devo',
@@ -18,15 +24,9 @@ let dataStorage = location.hash.slice(1);
 if (dataStoragesOld.includes(dataStorage)) {
     location.hash = '#' + dataStorages[dataStorage.includes('prod') ? 0 : 1];
 }
-
-const selectedColumns = new Set(
-    JSON.parse(
-        localStorage.columns || '["asin","contribution/glType","item/brandName","item/productType","title"]'
-    )
-);
-
-let asins;
-
+if (dataStorage == 'redundant-devo') {
+    dataStorage = 'asins-devo';
+}
 if (!dataStorages.includes(dataStorage)) {
     dataStorage = dataStorages[0];
 }
@@ -42,24 +42,26 @@ const isDevo = location.hash.includes('devo');
 const retailMerchantId = isDevo ? 4105074442 : 14311485635;
 
 const prodGLs = [
+  'gl_baby_product',
+  'gl_book',
   'gl_camera',
   'gl_electronics',
-  'gl_pc',
-  'gl_wireless',
   'gl_home',
+  'gl_home_entertainment',
   'gl_home_improvement',
   'gl_kitchen',
-  'gl_sports',
   'gl_office_product',
-  'gl_toy',
-  'gl_baby_product',
+  'gl_pc',
   'gl_personal_care_appliances',
-  'gl_book',
-  'gl_videogames',
-  'gl_home_entertainment'
+  'gl_sports',
+  'gl_toy',
+  'gl_video_games',
+  'gl_wireless'
 ];
 
 (function() {
+
+let asins;
 
 if (!dataStorage.includes('asins')) {
   return;
@@ -94,21 +96,21 @@ const app = new Vue({
       this.asins = asins.filter(_ => {
         if (
 
-          (_['merchantId'] == retailMerchantId ? !this.filters.isRetail : !this.filters.is3p)
+          (_.merchantId == retailMerchantId ? !this.filters.isRetail : !this.filters.is3p)
 
           ||
 
-          this.filters.gl && _['contribution/glType'] != this.filters.gl
+          this.filters.gl && _.glType != this.filters.gl
 
           ||
 
-          this.filters.ptd && _['item/productType'] != this.filters.ptd
+          this.filters.ptd && _.productType != this.filters.ptd
 
           ||
 
           this.filters.text
-              && !(_['title'] || '').toLowerCase().includes(this.filters.text)
-              && !(_['item/brandName'] || '').toLowerCase().includes(this.filters.text)
+              && !_.title.toLowerCase().includes(this.filters.text)
+              && !_.brandName.toLowerCase().includes(this.filters.text)
 
           ) {
           return false;
@@ -121,7 +123,6 @@ const app = new Vue({
 
 new Promise(function(resolve, reject) {
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', 'features.json', true);
     xhr.open('GET', dataStorage + '.json', true);
     xhr.onreadystatechange = function() {
       if (xhr.readyState == 4)
@@ -131,35 +132,16 @@ new Promise(function(resolve, reject) {
   })
     .then(_ => {
         asins = _
-          .filter(_ => prodGLs.includes(_.contribution.glType)) // TODO: move to data generation step
-          .map(_ => flatten(_));
+          .filter(_ => location.hash.match(/redundant/) ? !prodGLs.includes(_.glType) : prodGLs.includes(_.glType));
 
-        app.gls = [...new Set(asins.map(_ => _['contribution/glType']))].sort();
-        app.ptds = [...new Set(asins.map(_ => _['item/productType']))].sort();
+        app.gls = [...new Set(asins.map(_ => _.glType))].sort();
+        app.ptds = [...new Set(asins.map(_ => _.productType))].sort();
 
         app.columns = [...new Set([].concat(...asins.map(_ => Object.keys(_))))].sort();
         app.selectedColumns = app.columns.filter(_ => selectedColumns.has(_));
 
         app.update();
     });
-
-function flatten(node, prefix) {
-  const result = {};
-  Object.entries(node).forEach(([key, value]) => {
-    if (prefix) {
-      key = prefix + '/' + key;
-    }
-    if (typeof value == 'object') {
-      Object.assign(result, flatten(value, key));
-    } else {
-      if (key == 'contribution/creationDate') {
-        value = (new Date(value * 1000)).toString().slice(0, 25);
-      }
-      result[key] = value;
-    }
-  });
-  return result;
-}
 
 })();
 
@@ -195,7 +177,6 @@ const app = new Vue({
 
 new Promise(function(resolve, reject) {
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', 'features.json', true);
     xhr.open('GET', dataStorage + '.json', true);
     xhr.onreadystatechange = function() {
       if (xhr.readyState == 4)
