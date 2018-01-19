@@ -41,6 +41,24 @@ if (!dataStorages.includes(dataStorage)) {
 const isDevo = location.hash.includes('devo');
 const retailMerchantId = isDevo ? 4105074442 : 14311485635;
 
+const prodGLs = [
+  'gl_camera',
+  'gl_electronics',
+  'gl_pc',
+  'gl_wireless',
+  'gl_home',
+  'gl_home_improvement',
+  'gl_kitchen',
+  'gl_sports',
+  'gl_office_product',
+  'gl_toy',
+  'gl_baby_product',
+  'gl_personal_care_appliances',
+  'gl_book',
+  'gl_videogames',
+  'gl_home_entertainment'
+];
+
 (function() {
 
 if (!dataStorage.includes('asins')) {
@@ -100,24 +118,6 @@ const app = new Vue({
     }
   }
 });
-
-const prodGLs = [
-  'gl_camera',
-  'gl_electronics',
-  'gl_pc',
-  'gl_wireless',
-  'gl_home',
-  'gl_home_improvement',
-  'gl_kitchen',
-  'gl_sports',
-  'gl_office_product',
-  'gl_toy',
-  'gl_baby_product',
-  'gl_personal_care_appliances',
-  'gl_book',
-  'gl_videogames',
-  'gl_home_entertainment'
-];
 
 new Promise(function(resolve, reject) {
     const xhr = new XMLHttpRequest();
@@ -181,7 +181,8 @@ const app = new Vue({
       asins: [],
       filters: [],
       gls: [],
-      gl: ''
+      gl: '',
+      wdgs: []
   },
   methods: {
     update: function() {
@@ -202,13 +203,15 @@ new Promise(function(resolve, reject) {
     }
     xhr.send();
   })
-    .then(data => {
+    .then(_ => {
+        const data = _.filter(_ => prodGLs.includes(_.gl)) // TODO: move to data generation step
         data.forEach(_ => {
           _.features = new Set(
               _.features.map(
                 _ => _
                     .replace('_feature_div', '')
                     .replace(/.*product-description/, 'productDescription')
+                    .replace(/detail-bullets/, 'detail_bullets')
               )
             );
         });
@@ -216,9 +219,10 @@ new Promise(function(resolve, reject) {
         columns.delete('hero-quick-promo-grid');
         columns.delete('product-alert-grid');
         columns.delete('qpe-title-tag');
-        app.columns = [...columns];
+        app.columns = [...columns].sort();
 
-        app.gls = [...new Set(data.map(_ => _.gl))]
+        app.gls = [...new Set(data.map(_ => _.gl))];
+        app.wdgs = [...new Set(data.map(_ => _.wdg))];
 
         asins = data
             .map(_ => {

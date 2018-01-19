@@ -130,6 +130,7 @@
                     <th>#</th>
                     <th>ASIN</th>
                     <th>GL</th>
+                    <th>WDG</th>
                     <th v-for="column in columns" class="text-center">
                         <label>
                             <input type="checkbox" v-bind:value="column" v-model="filters" v-on:change="update">
@@ -143,6 +144,7 @@
                 <th>{{ index + 1 }}</th>
                 <td><a v-bind:href="host + asin.title">{{ asin.title }}</a></td>
                 <td>{{ asin.gl }}</td>
+                <td>{{ asin.wdg }}</td>
                 <td
                     v-for="column in columns"
                     v-bind:class="{ 'bg-success': asin.features.has(column), 'bg-warning': !asin.features.has(column) }">
