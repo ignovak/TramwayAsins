@@ -145,7 +145,7 @@
             </thead>
             <tr v-for="(asin, index) in asins">
                 <th>{{ index + 1 }}</th>
-                <td><a v-bind:href="host + asin.title">{{ asin.title }}</a></td>
+                <td><a v-bind:href="host + asin.asin">{{ asin.asin }}</a></td>
                 <td>{{ asin.gl }}</td>
                 <td>{{ asin.wdg }}</td>
                 <td

@@ -205,11 +205,7 @@ new Promise(function(resolve, reject) {
         app.gls = [...new Set(data.map(_ => _.gl))];
         app.wdgs = [...new Set(data.map(_ => _.wdg))];
 
-        asins = data
-            .map(_ => {
-                _.title = _.url.match(/\w+$/)[0];
-                return _;
-            });
+        asins = data;
         app.update();
     });
 
