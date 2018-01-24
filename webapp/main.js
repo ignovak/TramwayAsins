@@ -78,11 +78,13 @@ const app = new Vue({
       asins: [],
       gls: [],
       ptds: [],
+      wdgs: [],
       filters: {
         is3p: true,
         isRetail: true,
         gl: '',
         ptd: '',
+        wdg: '',
         text: ''
       }
   },
@@ -108,9 +110,13 @@ const app = new Vue({
 
           ||
 
+          this.filters.wdg && _.wdg != this.filters.wdg
+
+          ||
+
           this.filters.text
               && !_.title.toLowerCase().includes(this.filters.text)
-              && !_.brandName.toLowerCase().includes(this.filters.text)
+              && !(_.brandName || '').toLowerCase().includes(this.filters.text)
 
           ) {
           return false;
@@ -136,6 +142,7 @@ new Promise(function(resolve, reject) {
 
         app.gls = [...new Set(asins.map(_ => _.glType))].sort();
         app.ptds = [...new Set(asins.map(_ => _.productType))].sort();
+        app.wdgs = [...new Set(asins.map(_ => _.wdg))].filter(Boolean).sort();
 
         app.columns = [...new Set([].concat(...asins.map(_ => Object.keys(_))))].sort();
         app.selectedColumns = app.columns.filter(_ => selectedColumns.has(_));
@@ -162,15 +169,17 @@ const app = new Vue({
       host: location.hash.includes('devo') ? 'https://tr-development.amazon.com/dp/' : 'https://tr-pre-prod.amazon.com/dp/',
       asins: [],
       filters: [],
-      gls: [],
       gl: '',
+      gls: [],
+      wdg: '',
       wdgs: []
   },
   methods: {
     update: function() {
       this.asins = asins
         .filter(_ => this.filters.every(feature => _.features.has(feature)))
-        .filter(_ => this.gl == '' || _.gl == this.gl);
+        .filter(_ => this.gl == '' || _.gl == this.gl)
+        .filter(_ => this.wdg == '' || _.wdg == this.wdg);
     }
   }
 });
@@ -202,8 +211,8 @@ new Promise(function(resolve, reject) {
         columns.delete('qpe-title-tag');
         app.columns = [...columns].sort();
 
-        app.gls = [...new Set(data.map(_ => _.gl))];
-        app.wdgs = [...new Set(data.map(_ => _.wdg))];
+        app.gls = [...new Set(data.map(_ => _.gl))].sort();
+        app.wdgs = [...new Set(data.map(_ => _.wdg))].filter(Boolean).sort();
 
         asins = data;
         app.update();
