@@ -39,7 +39,7 @@ if (!dataStorages.includes(dataStorage)) {
     });
 
 const isDevo = location.hash.includes('devo');
-const retailMerchantId = isDevo ? 4105074442 : 14311485635;
+const retailMerchantId = isDevo ? /4105074442/ : /14311485635/;
 
 const prodGLs = [
   'gl_baby_product',
@@ -59,9 +59,28 @@ const prodGLs = [
   'gl_wireless'
 ];
 
-(function() {
-
 let asins;
+
+const appData = {
+  columns: [],
+  host: isDevo ? 'https://tr-development.amazon.com/dp/' : 'https://tr-pre-prod.amazon.com/dp/',
+  selectedColumns: [],
+  asins: [],
+  gls: [],
+  ptds: [],
+  wdgs: [],
+  filters: {
+    features: [],
+    gl: '',
+    is3p: true,
+    isRetail: true,
+    ptd: '',
+    wdg: '',
+    text: ''
+  }
+};
+
+(function() {
 
 if (!dataStorage.includes('asins')) {
   return;
@@ -71,23 +90,7 @@ document.querySelector('#asins-app').removeAttribute('hidden');
 
 const app = new Vue({
   el: '#asins-app',
-  data: {
-      columns: [],
-      host: isDevo ? 'https://tr-development.amazon.com/dp/' : 'https://tr-pre-prod.amazon.com/dp/',
-      selectedColumns: [],
-      asins: [],
-      gls: [],
-      ptds: [],
-      wdgs: [],
-      filters: {
-        is3p: true,
-        isRetail: true,
-        gl: '',
-        ptd: '',
-        wdg: '',
-        text: ''
-      }
-  },
+  data: appData,
   watch: {
     selectedColumns: function () {
       localStorage.columns = JSON.stringify(this.selectedColumns);
@@ -95,34 +98,27 @@ const app = new Vue({
   },
   methods: {
     update: function() {
-      this.asins = asins.filter(_ => {
-        if (
-
-          (_.merchantId == retailMerchantId ? !this.filters.isRetail : !this.filters.is3p)
-
+      this.asins = asins.filter(_ => (
+        (
+          this.filters.isRetail && retailMerchantId.test(_.merchantId)
           ||
-
-          this.filters.gl && _.glType != this.filters.gl
-
+          this.filters.is3p && !retailMerchantId.test(_.merchantId)
+        )
+        &&
+        (!this.filters.gl || _.glType == this.filters.gl)
+        &&
+        (!this.filters.ptd || _.productType == this.filters.ptd)
+        &&
+        (!this.filters.wdg || _.wdg == this.filters.wdg)
+        &&
+        (
+          !this.filters.text
           ||
-
-          this.filters.ptd && _.productType != this.filters.ptd
-
+          _.title.toLowerCase().includes(this.filters.text)
           ||
-
-          this.filters.wdg && _.wdg != this.filters.wdg
-
-          ||
-
-          this.filters.text
-              && !_.title.toLowerCase().includes(this.filters.text)
-              && !(_.brandName || '').toLowerCase().includes(this.filters.text)
-
-          ) {
-          return false;
-        }
-        return true;
-      });
+          (_.brandName || '').toLowerCase().includes(this.filters.text)
+        )
+      ));
     }
   }
 });
@@ -164,22 +160,22 @@ let asins;
 
 const app = new Vue({
   el: '#features-app',
-  data: {
-      columns: [],
-      host: location.hash.includes('devo') ? 'https://tr-development.amazon.com/dp/' : 'https://tr-pre-prod.amazon.com/dp/',
-      asins: [],
-      filters: [],
-      gl: '',
-      gls: [],
-      wdg: '',
-      wdgs: []
-  },
+  data: appData,
   methods: {
     update: function() {
-      this.asins = asins
-        .filter(_ => this.filters.every(feature => _.features.has(feature)))
-        .filter(_ => this.gl == '' || _.gl == this.gl)
-        .filter(_ => this.wdg == '' || _.wdg == this.wdg);
+      this.asins = asins.filter(_ => (
+        // (
+        //   this.filters.isRetail && _.merchants.match(retailMerchantId)
+        //   ||
+        //   this.filters.is3p && _.merchants.replace(retailMerchantId, '')
+        // )
+        // &&
+        (!this.filters.gl || _.glType == this.filters.gl)
+        &&
+        (!this.filters.wdg || _.wdg == this.filters.wdg)
+        &&
+        this.filters.features.every(feature => _.features.has(feature))
+      ));
     }
   }
 });
@@ -199,7 +195,6 @@ new Promise(function(resolve, reject) {
           _.features = new Set(
               _.features.map(
                 _ => _
-                    .replace('_feature_div', '')
                     .replace(/.*product-description/, 'productDescription')
                     .replace(/detail-bullets/, 'detail_bullets')
               )

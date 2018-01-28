@@ -9,7 +9,7 @@
     transform: rotate(180deg);
     white-space: nowrap;
   }
-  #features-app label input {
+  .table label input {
     transform: rotate(180deg) translate(5px);
   }
 </style>
@@ -125,10 +125,25 @@
         <div class="form-group bg-light p-3">
             <h5 class="card-subtitle">Filters</h5>
 
+            <!-- <div class="form-group row"> -->
+            <!--     <div class="col-12"> -->
+            <!--         <div class="form-check form-check-inline"> -->
+            <!--             <label class="form-check-label"> -->
+            <!--                 <input class="form-check-input" type="checkbox" v-model="filters.isRetail" v-on:change="update"> Retail ASINs -->
+            <!--             </label> -->
+            <!--         </div> -->
+            <!--         <div class="form-check form-check-inline"> -->
+            <!--             <label class="form-check-label"> -->
+            <!--                 <input class="form-check-input" type="checkbox" v-model="filters.is3p" v-on:change="update"> 3P ASINs -->
+            <!--             </label> -->
+            <!--         </div> -->
+            <!--     </div> -->
+            <!-- </div> -->
+
             <div class="form-group row">
                 <label for="gl-filter-2" class="col-3 col-form-label">Filter by GL</label>
                 <div class="col-9">
-                    <select class="custom-select" id="gl-filter-2" v-model="gl" v-on:change="update">
+                    <select class="custom-select" id="gl-filter-2" v-model="filters.gl" v-on:change="update">
                         <option selected></option>
                         <option v-for="gl in gls" v-bind:value="gl">{{ gl }}</option>
                     </select>
@@ -138,7 +153,7 @@
             <div class="form-group row">
                 <label for="wdg-filter-2" class="col-3 col-form-label">Filter by WDG</label>
                 <div class="col-9">
-                    <select class="custom-select" id="wdg-filter-2" v-model="wdg" v-on:change="update">
+                    <select class="custom-select" id="wdg-filter-2" v-model="filters.wdg" v-on:change="update">
                         <option selected></option>
                         <option v-for="wdg in wdgs" v-bind:value="wdg">{{ wdg }}</option>
                     </select>
@@ -154,9 +169,10 @@
                     <th>ASIN</th>
                     <th>GL</th>
                     <th>WDG</th>
+                    <!-- <th>merch</th> -->
                     <th v-for="column in columns" class="text-center">
                         <label>
-                            <input type="checkbox" v-bind:value="column" v-model="filters" v-on:change="update">
+                            <input type="checkbox" v-bind:value="column" v-model="filters.features" v-on:change="update">
                             {{ column }}
                         </label>
                     </th>
@@ -168,6 +184,7 @@
                 <td><a v-bind:href="host + asin.asin">{{ asin.asin }}</a></td>
                 <td>{{ asin.gl }}</td>
                 <td>{{ asin.wdg }}</td>
+                <!-- <td>{{ asin.merchants }}</td> -->
                 <td
                     v-for="column in columns"
                     v-bind:class="{ 'bg-success': asin.features.has(column), 'bg-warning': !asin.features.has(column) }">
