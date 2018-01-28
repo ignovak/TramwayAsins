@@ -89,6 +89,20 @@ const appData = {
   }
 };
 
+const fetch = _ => {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', dataStorage + '.json', true);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4) {
+        document.querySelector('.progress-card').setAttribute('hidden', true);
+        resolve(JSON.parse(xhr.responseText));
+      }
+    }
+    xhr.send();
+  })
+};
+
 (function() {
 
 if (!dataStorage.includes('asins')) {
@@ -132,15 +146,7 @@ const app = new Vue({
   }
 });
 
-new Promise(function(resolve, reject) {
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', dataStorage + '.json', true);
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState == 4)
-        resolve(JSON.parse(xhr.responseText));
-    }
-    xhr.send();
-  })
+fetch(dataStorage + '.json')
     .then(_ => {
         asins = _
           .filter(_ => location.hash.match(/redundant/) ? !prodGLs.includes(_.glType) : prodGLs.includes(_.glType));
@@ -189,15 +195,7 @@ const app = new Vue({
   }
 });
 
-new Promise(function(resolve, reject) {
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', dataStorage + '.json', true);
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState == 4)
-        resolve(JSON.parse(xhr.responseText));
-    }
-    xhr.send();
-  })
+fetch(dataStorage + '.json')
     .then(_ => {
         const data = _.filter(_ => prodGLs.includes(_.gl)) // TODO: move to data generation step
         data.forEach(_ => {
