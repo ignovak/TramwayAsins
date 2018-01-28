@@ -1,5 +1,14 @@
 addEventListener('hashchange', _ => location.reload());
 
+document.body.addEventListener('mouseover', _ => {
+  if (_.target.nodeName == 'TD' && _.target.className) {
+    _.target.setAttribute('title', {
+      'bg-success': 'Feature is present on the page and displays the content',
+      'bg-warning': 'Feature is either not present on the page or doesn\'t have any content'
+    }[_.target.className]);
+  }
+});
+
 const selectedColumns = new Set(
     JSON.parse(
         localStorage.columns || '["asin","glType","brandName","productType","title"]'
