@@ -53,35 +53,9 @@
                 </div>
             </div>
 
-            <div class="form-group row">
-                <label for="gl-filter-1" class="col-3 col-form-label">Filter by GL</label>
-                <div class="col-9">
-                    <select class="custom-select" id="gl-filter-1" v-model="filters.gl" v-on:change="update">
-                        <option selected></option>
-                        <option v-for="gl in gls" v-bind:value="gl">{{ gl }}</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label for="ptd-filter" class="col-3 col-form-label">Filter by Product Type</label>
-                <div class="col-9">
-                    <select class="custom-select" id="ptd-filter" v-model="filters.ptd" v-on:change="update">
-                        <option selected></option>
-                        <option v-for="ptd in ptds" v-bind:value="ptd">{{ ptd }}</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label for="wdg-filter-1" class="col-3 col-form-label">Filter by WDG</label>
-                <div class="col-9">
-                    <select class="custom-select" id="wdg-filter-1" v-model="filters.wdg" v-on:change="update">
-                        <option selected></option>
-                        <option v-for="wdg in wdgs" v-bind:value="wdg">{{ wdg }}</option>
-                    </select>
-                </div>
-            </div>
+            <asin-filter :name="'gl'" :data="gls" :value="filters.gl" :title="'Filter by GL'" @update="updateFilter"></asin-filter>
+            <asin-filter :name="'ptd'" :data="ptds" :value="filters.ptd" :title="'Filter by Product Type'" @update="updateFilter"></asin-filter>
+            <asin-filter :name="'wdg'" :data="wdgs" :value="filters.wdg" :title="'Filter by WDG'" @update="updateFilter"></asin-filter>
 
             <div class="form-group row">
                 <label for="text-filter" class="col-3 col-form-label">Filter by Title and Brand name</label>
@@ -142,25 +116,8 @@
             <!--     </div> -->
             <!-- </div> -->
 
-            <div class="form-group row">
-                <label for="gl-filter-2" class="col-4 col-form-label">Filter by GL</label>
-                <div class="col-8">
-                    <select class="custom-select" id="gl-filter-2" v-model="filters.gl" v-on:change="update">
-                        <option selected></option>
-                        <option v-for="gl in gls" v-bind:value="gl">{{ gl }}</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label for="wdg-filter-2" class="col-4 col-form-label">Filter by WDG</label>
-                <div class="col-8">
-                    <select class="custom-select" id="wdg-filter-2" v-model="filters.wdg" v-on:change="update">
-                        <option selected></option>
-                        <option v-for="wdg in wdgs" v-bind:value="wdg">{{ wdg }}</option>
-                    </select>
-                </div>
-            </div>
+                    <asin-filter :name="'gl'" :data="gls" :value="filters.gl" :title="'Filter by GL'" @update="updateFilter"></asin-filter>
+                    <asin-filter :name="'wdg'" :data="wdgs" :value="filters.wdg" :title="'Filter by WDG'" @update="updateFilter"></asin-filter>
 
                 </div>
 

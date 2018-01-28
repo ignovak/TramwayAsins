@@ -103,6 +103,29 @@ const fetch = _ => {
   })
 };
 
+Vue.component('asin-filter', {
+  props: ['name', 'data', 'value', 'title'],
+  data: function () {
+    return { id: 'my-filter-' + (Math.random() * 1000 | 0) };
+  },
+  methods: {
+    update: function (value) {
+      this.$emit('update', this.name, value);
+    }
+  },
+  template: `
+    <div class="form-group row">
+        <label v-bind:for="id" class="col-3 col-form-label">{{ title }}</label>
+        <div class="col-9">
+            <select class="custom-select" v-bind:id="id" v-bind:value="value" v-on:change="update($event.target.value)">
+                <option selected></option>
+                <option v-for="item in data" v-bind:value="item">{{ item }}</option>
+            </select>
+        </div>
+    </div>
+  `
+});
+
 (function() {
 
 if (!dataStorage.includes('asins')) {
@@ -114,11 +137,6 @@ document.querySelector('#asins-app').removeAttribute('hidden');
 const app = new Vue({
   el: '#asins-app',
   data: appData,
-  watch: {
-    selectedColumns: function () {
-      localStorage.columns = JSON.stringify(this.selectedColumns);
-    }
-  },
   methods: {
     update: function() {
       this.asins = asins.filter(_ => (
@@ -142,6 +160,18 @@ const app = new Vue({
           (_.brandName || '').toLowerCase().includes(this.filters.text)
         )
       ));
+    },
+    updateFilter: function (filter, value) {
+      this.filters[filter] = value;
+    }
+  },
+  watch: {
+    filters: {
+      handler: 'update',
+      deep: true
+    },
+    selectedColumns: function () {
+      localStorage.columns = JSON.stringify(this.selectedColumns);
     }
   }
 });
@@ -185,12 +215,21 @@ const app = new Vue({
         //   this.filters.is3p && _.merchants.replace(retailMerchantId, '')
         // )
         // &&
-        (!this.filters.gl || _.glType == this.filters.gl)
+        (!this.filters.gl || _.gl == this.filters.gl)
         &&
         (!this.filters.wdg || _.wdg == this.filters.wdg)
         &&
         this.filters.features.every(feature => _.features.has(feature))
       ));
+    },
+    updateFilter: function (filter, value) {
+      this.filters[filter] = value;
+    }
+  },
+  watch: {
+    filters: {
+      handler: 'update',
+      deep: true
     }
   }
 });
