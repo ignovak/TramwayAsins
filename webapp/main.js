@@ -26,7 +26,9 @@ const dataStorages = [
     'asins-prod',
     'asins-devo',
     'features-prod',
-    'features-devo'
+    'features-devo',
+    'asins-devo-old',
+    'features-devo-old'
 ];
 
 let dataStorage = location.hash.slice(1);
