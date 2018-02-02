@@ -78,6 +78,7 @@ const appData = {
   selectedColumns: [],
   asins: [],
   gls: [],
+  isDebug: !!localStorage.isDebug,
   ptds: [],
   wdgs: [],
   filters: {
@@ -117,13 +118,13 @@ Vue.component('asin-filter', {
   },
   template: `
     <div class="form-group row">
-        <label v-bind:for="id" class="col-3 col-form-label">{{ title }}</label>
-        <div class="col-9">
-            <select class="custom-select" v-bind:id="id" v-bind:value="value" v-on:change="update($event.target.value)">
-                <option selected></option>
-                <option v-for="item in data" v-bind:value="item">{{ item }}</option>
-            </select>
-        </div>
+      <label v-bind:for="id" class="col-3 col-form-label">{{ title }}</label>
+      <div class="col-9">
+        <select class="custom-select" v-bind:id="id" v-bind:value="value" v-on:change="update($event.target.value)">
+          <option selected></option>
+          <option v-for="item in data" v-bind:value="item">{{ item }}</option>
+        </select>
+      </div>
     </div>
   `
 });
@@ -141,6 +142,7 @@ const app = new Vue({
   data: appData,
   methods: {
     update: function() {
+      setTimeout(_ => localStorage.isDebug = this.isDebug ? 'debug' : '');
       this.asins = asins.filter(_ => (
         (
           this.filters.isRetail && retailMerchantId.test(_.merchantId)
@@ -210,6 +212,7 @@ const app = new Vue({
   data: appData,
   methods: {
     update: function() {
+      setTimeout(_ => localStorage.isDebug = this.isDebug ? 'debug' : '');
       this.asins = asins.filter(_ => (
         // (
         //   this.filters.isRetail && _.merchants.match(retailMerchantId)

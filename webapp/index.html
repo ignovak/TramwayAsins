@@ -70,6 +70,16 @@
                 </div>
             </div>
 
+            <div class="form-group row">
+                <div class="col-12">
+                    <div class="form-check form-check-inline">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox" v-model="isDebug" v-on:change="update"> Add <code>?isDebug=1&amp;twisterCacDebug=1</code> to the links
+                        </label>
+                    </div>
+                </div>
+            </div>
+
         </div>
         <details>
             <summary>Select columns</summary>
@@ -93,7 +103,7 @@
                 <th>{{ index + 1 }}</th>
                 <td v-for="column in selectedColumns">
                     <template v-if="column == 'asin'">
-                        <a v-bind:href="host + asin[column]">{{ asin[column] }}</a>
+                        <a v-bind:href="host + asin[column] + (isDebug ? '?isDebug=1&twisterCacDebug=1' : '')">{{ asin[column] }}</a>
                     </template>
                     <template v-else>{{ asin[column] }}</template>
                 </td>
@@ -138,6 +148,16 @@
                 </div>
             </div>
 
+            <div class="form-group row">
+                <div class="col-12">
+                    <div class="form-check form-check-inline">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox" v-model="isDebug" v-on:change="update"> Add <code>?isDebug=1&amp;twisterCacDebug=1</code> to the links
+                        </label>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <table class="table table-hover table-bordered">
@@ -159,7 +179,7 @@
             </thead>
             <tr v-for="(asin, index) in asins">
                 <th>{{ index + 1 }}</th>
-                <td><a v-bind:href="host + asin.asin">{{ asin.asin }}</a></td>
+                <td><a v-bind:href="host + asin.asin + (isDebug ? '?isDebug=1&twisterCacDebug=1' : '')">{{ asin.asin }}</a></td>
                 <td>{{ asin.gl }}</td>
                 <td>{{ asin.wdg }}</td>
                 <!-- <td>{{ asin.merchants }}</td> -->
