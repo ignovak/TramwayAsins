@@ -108,20 +108,18 @@ const fetch = _ => {
 };
 
 Vue.component('asin-filter', {
-  props: ['name', 'data', 'value', 'title'],
+  model: {
+    event: 'change'
+  },
+  props: ['data', 'value', 'title'],
   data: function () {
     return { id: 'my-filter-' + (Math.random() * 1000 | 0) };
-  },
-  methods: {
-    update: function (value) {
-      this.$emit('update', this.name, value);
-    }
   },
   template: `
     <div class="form-group row">
       <label v-bind:for="id" class="col-3 col-form-label">{{ title }}</label>
       <div class="col-9">
-        <select class="custom-select" v-bind:id="id" v-bind:value="value" v-on:change="update($event.target.value)">
+        <select class="custom-select" :id="id" :value="value" @change="$emit('change', $event.target.value)">
           <option selected></option>
           <option v-for="item in data" v-bind:value="item">{{ item }}</option>
         </select>
@@ -188,9 +186,6 @@ const app = new Vue({
           (_.brandName || '').toLowerCase().includes(this.filters.text)
         )
       ));
-    },
-    updateFilter: function (filter, value) {
-      this.filters[filter] = value;
     }
   },
   watch: {
@@ -247,9 +242,6 @@ const app = new Vue({
         &&
         this.filters.features.every(feature => _.features.has(feature))
       ));
-    },
-    updateFilter: function (filter, value) {
-      this.filters[filter] = value;
     }
   },
   watch: {

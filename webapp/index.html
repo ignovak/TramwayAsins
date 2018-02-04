@@ -61,10 +61,9 @@
                         </div>
                     </div>
 
-                    <asin-filter :name="'gl'" :data="gls" :value="filters.gl" :title="'Filter by GL'" @update="updateFilter"></asin-filter>
-
-                    <asin-filter v-if="!isFeaturesApp" :name="'ptd'" :data="ptds" :value="filters.ptd" :title="'Filter by Product Type'" @update="updateFilter"></asin-filter>
-                    <asin-filter :name="'wdg'" :data="wdgs" :value="filters.wdg" :title="'Filter by WDG'" @update="updateFilter"></asin-filter>
+                    <asin-filter v-model="filters.gl" :data="gls" :title="'Filter by GL'"></asin-filter>
+                    <asin-filter v-if="!isFeaturesApp" v-model="filters.ptd" :data="ptds" :title="'Filter by Product Type'"></asin-filter>
+                    <asin-filter v-model="filters.wdg" :data="wdgs" :title="'Filter by WDG'"></asin-filter>
 
                     <div v-if="!isFeaturesApp" class="form-group row">
                         <label for="text-filter" class="col-3 col-form-label">Filter by Title and Brand name</label>
