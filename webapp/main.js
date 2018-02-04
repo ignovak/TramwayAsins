@@ -129,6 +129,32 @@ Vue.component('asin-filter', {
   `
 });
 
+Vue.component('is-debug', {
+  model: {
+    prop: 'checked',
+    event: 'change'
+  },
+  props: ['checked'],
+  methods: {
+    update: function (isChecked) {
+      this.$emit('change', isChecked);
+      setTimeout(_ => localStorage.isDebug = isChecked ? 'debug' : '');
+    }
+  },
+  template: `
+    <div class="form-group row">
+      <div class="col-12">
+        <div class="form-check form-check-inline">
+          <label class="form-check-label">
+            <input class="form-check-input" type="checkbox" :checked="checked" @change="update($event.target.checked)">
+            Add <code>?isDebug=1&amp;twisterCacDebug=1</code> to the links
+          </label>
+        </div>
+      </div>
+    </div>
+  `
+});
+
 (function() {
 
 if (!dataStorage.includes('asins')) {
@@ -142,7 +168,6 @@ const app = new Vue({
   data: appData,
   methods: {
     update: function() {
-      setTimeout(_ => localStorage.isDebug = this.isDebug ? 'debug' : '');
       this.asins = asins.filter(_ => (
         (
           this.filters.isRetail && retailMerchantId.test(_.merchantId)
@@ -212,7 +237,6 @@ const app = new Vue({
   data: appData,
   methods: {
     update: function() {
-      setTimeout(_ => localStorage.isDebug = this.isDebug ? 'debug' : '');
       this.asins = asins.filter(_ => (
         // (
         //   this.filters.isRetail && _.merchants.match(retailMerchantId)
