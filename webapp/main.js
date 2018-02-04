@@ -79,6 +79,7 @@ const appData = {
   asins: [],
   gls: [],
   isDebug: !!localStorage.isDebug,
+  isFeaturesApp: dataStorage.includes('features'),
   ptds: [],
   wdgs: [],
   filters: {
@@ -161,10 +162,8 @@ if (!dataStorage.includes('asins')) {
   return;
 }
 
-document.querySelector('#asins-app').removeAttribute('hidden');
-
 const app = new Vue({
-  el: '#asins-app',
+  el: '#app',
   data: appData,
   methods: {
     update: function() {
@@ -228,12 +227,10 @@ if (!dataStorage.includes('features')) {
   return;
 }
 
-document.querySelector('#features-app').removeAttribute('hidden');
-
 let asins;
 
 const app = new Vue({
-  el: '#features-app',
+  el: '#app',
   data: appData,
   methods: {
     update: function() {

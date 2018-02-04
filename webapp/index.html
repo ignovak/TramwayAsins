@@ -40,40 +40,60 @@
         </li>
     </ul>
 
-    <div class="card-body" hidden id="asins-app">
+    <div class="card-body" id="app">
         <div class="bg-light mb-3 p-3">
-            <h5 class="card-subtitle">Filters</h5>
+            <div class="row">
+                <div class="col-6">
+                    <h5 class="card-subtitle">Filters</h5>
 
-            <div class="form-group row">
-                <div class="col-12">
-                    <div class="form-check form-check-inline">
-                        <label class="form-check-label">
-                            <input class="form-check-input" type="checkbox" v-model="filters.isRetail" v-on:change="update"> Retail ASINs
-                        </label>
+                    <div v-if="!isFeaturesApp" class="form-group row">
+                        <div class="col-12">
+                            <div class="form-check form-check-inline">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="checkbox" v-model="filters.isRetail" v-on:change="update"> Retail ASINs
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="checkbox" v-model="filters.is3p" v-on:change="update"> 3P ASINs
+                                </label>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-check form-check-inline">
-                        <label class="form-check-label">
-                            <input class="form-check-input" type="checkbox" v-model="filters.is3p" v-on:change="update"> 3P ASINs
-                        </label>
+
+                    <asin-filter :name="'gl'" :data="gls" :value="filters.gl" :title="'Filter by GL'" @update="updateFilter"></asin-filter>
+
+                    <asin-filter v-if="!isFeaturesApp" :name="'ptd'" :data="ptds" :value="filters.ptd" :title="'Filter by Product Type'" @update="updateFilter"></asin-filter>
+                    <asin-filter :name="'wdg'" :data="wdgs" :value="filters.wdg" :title="'Filter by WDG'" @update="updateFilter"></asin-filter>
+
+                    <div v-if="!isFeaturesApp" class="form-group row">
+                        <label for="text-filter" class="col-3 col-form-label">Filter by Title and Brand name</label>
+                        <div class="col-9">
+                            <input class="form-control" id="text-filter" placeholder="Type text..." v-model="filters.text" v-on:input="update">
+                        </div>
                     </div>
+
+                    <is-debug v-model="isDebug"></is-debug>
+                </div>
+
+                <div class="col-6">
+                    <p>
+                        <em>With any feedback, bug reports, feature requests, questions, please contact @novakin</em>
+                    </p>
+
+                    <h5 v-if="isFeaturesApp" class="card-subtitle mt-5">Legend</h5>
+                    <dl v-if="isFeaturesApp" class="row m-1">
+                        <dt class="col-1 bg-success"></dt>
+                        <dd class="col-11">Feature is present on the page and displays the content</dd>
+                        <dt class="col-1 mt-1 bg-warning"></dt>
+                        <dd class="col-11 mt-1">Feature is either not present on the page or doesn't have any content</dd>
+                    </dl>
                 </div>
             </div>
-
-            <asin-filter :name="'gl'" :data="gls" :value="filters.gl" :title="'Filter by GL'" @update="updateFilter"></asin-filter>
-            <asin-filter :name="'ptd'" :data="ptds" :value="filters.ptd" :title="'Filter by Product Type'" @update="updateFilter"></asin-filter>
-            <asin-filter :name="'wdg'" :data="wdgs" :value="filters.wdg" :title="'Filter by WDG'" @update="updateFilter"></asin-filter>
-
-            <div class="form-group row">
-                <label for="text-filter" class="col-3 col-form-label">Filter by Title and Brand name</label>
-                <div class="col-9">
-                    <input class="form-control" id="text-filter" placeholder="Type text..." v-model="filters.text" v-on:input="update">
-                </div>
-            </div>
-
-            <is-debug v-model="isDebug"></is-debug>
 
         </div>
-        <details>
+
+        <details v-if="!isFeaturesApp">
             <summary>Select columns</summary>
             <div class="columns">
                 <div class="form-check form-check-inline" v-for="column in columns">
@@ -84,7 +104,8 @@
                 </div>
             </div>
         </details>
-        <table class="table table-hover">
+
+        <table v-if="!isFeaturesApp" class="table table-hover">
             <thead class="thead-default">
                 <tr>
                     <th>#</th>
@@ -101,50 +122,8 @@
                 </td>
             </tr>
         </table>
-    </div>
 
-    <div class="card-body" hidden id="features-app">
-        <div class="bg-light mb-3 p-3">
-            <div class="row">
-                <div class="col-6">
-                    <h5 class="card-subtitle">Filters</h5>
-
-            <!-- <div class="form-group row"> -->
-            <!--     <div class="col-12"> -->
-            <!--         <div class="form-check form-check-inline"> -->
-            <!--             <label class="form-check-label"> -->
-            <!--                 <input class="form-check-input" type="checkbox" v-model="filters.isRetail" v-on:change="update"> Retail ASINs -->
-            <!--             </label> -->
-            <!--         </div> -->
-            <!--         <div class="form-check form-check-inline"> -->
-            <!--             <label class="form-check-label"> -->
-            <!--                 <input class="form-check-input" type="checkbox" v-model="filters.is3p" v-on:change="update"> 3P ASINs -->
-            <!--             </label> -->
-            <!--         </div> -->
-            <!--     </div> -->
-            <!-- </div> -->
-
-                    <asin-filter :name="'gl'" :data="gls" :value="filters.gl" :title="'Filter by GL'" @update="updateFilter"></asin-filter>
-                    <asin-filter :name="'wdg'" :data="wdgs" :value="filters.wdg" :title="'Filter by WDG'" @update="updateFilter"></asin-filter>
-
-                </div>
-
-                <div class="col-6">
-                    <h5 class="card-subtitle">Legend</h5>
-                    <dl class="row m-1">
-                        <dt class="col-1 bg-success"></dt>
-                        <dd class="col-11">Feature is present on the page and displays the content</dd>
-                        <dt class="col-1 mt-1 bg-warning"></dt>
-                        <dd class="col-11 mt-1">Feature is either not present on the page or doesn't have any content</dd>
-                    </dl>
-                </div>
-            </div>
-
-            <is-debug v-model="isDebug"></is-debug>
-
-        </div>
-
-        <table class="table table-hover table-bordered">
+        <table v-if="isFeaturesApp" class="table table-hover table-bordered">
             <thead class="thead-default text-capitalize">
                 <tr>
                     <th>#</th>
