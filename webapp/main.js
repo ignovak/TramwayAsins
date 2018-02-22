@@ -157,25 +157,31 @@ Vue.component('is-debug', {
 Vue.component('last-modified', (resolve, reject) => {
   new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      xhr.open('GET', '/sapp/projects', true);
+      xhr.open('GET', 'update_date', true);
       xhr.onreadystatechange = function() {
         if (xhr.readyState == 4) {
-          resolve(JSON.parse(xhr.responseText));
+          if (xhr.status == 200) {
+            resolve(xhr.responseText);
+          } else {
+            reject(xhr.statusText);
+          }
         }
       }
       xhr.send();
     })
-    .then(_ => _.find(_ => _.name == 'TramwayAsins'))
     .then(_ => {
+      if (localStorage.updateDate != _) {
+        localStorage.updateDate = _;
+      }
       resolve({
         template: `
           <div class="nav-link">
-            Last modified:
-            <em>${ String(new Date(_.lastModified)).slice(0, 24) }</em>
+            Data is updated: <em>${ _ }</em>
           </div>
         `
       })
-    });
+    })
+    .catch(_ => console.log(_));
 });
 
 (function() {
