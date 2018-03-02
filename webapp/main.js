@@ -15,43 +15,6 @@ const selectedColumns = new Set(
     ).map(_ => _.replace(/.*\//, ''))
 );
 
-const dataStoragesOld = [
-    'retail-prod',
-    'retail-devo',
-    '3p-devo',
-    '3p-prod'
-];
-
-const dataStorages = [
-    'asins-prod',
-    'asins-devo',
-    'features-prod',
-    'features-devo',
-    'asins-devo-old',
-    'features-devo-old'
-];
-
-let dataStorage = location.hash.slice(1);
-if (dataStoragesOld.includes(dataStorage)) {
-    location.hash = '#' + dataStorages[dataStorage.includes('prod') ? 0 : 1];
-}
-if (dataStorage == 'redundant-devo') {
-    dataStorage = 'asins-devo';
-}
-if (!dataStorages.includes(dataStorage)) {
-    dataStorage = dataStorages[0];
-}
-[].slice.call(document.body.querySelectorAll('.nav-link'))
-    .forEach(_ => {
-        if (_.href == location.href) {
-            document.body.querySelector('.nav-link.active').classList.toggle('active');
-            _.classList.toggle('active');
-        }
-    });
-
-const isDevo = location.hash.includes('devo');
-const retailMerchantId = isDevo ? /4105074442/ : /14311485635/;
-
 const prodGLs = [
   'gl_baby_product',
   'gl_book',
@@ -70,6 +33,48 @@ const prodGLs = [
   'gl_wireless'
 ];
 
+const dataStoragesOld = [
+    'retail-prod',
+    'retail-devo',
+    '3p-devo',
+    '3p-prod'
+];
+
+const dataStorages = [
+    'asins-prod',
+    'asins-devo',
+    'features-prod',
+    'features-devo',
+    'asins-devo-old',
+    'features-devo-old'
+];
+
+dataStorages.push(...prodGLs.map(_ => 'asins-prod-' + _));
+dataStorages.push(...prodGLs.map(_ => 'asins-devo-' + _));
+
+let dataStorage = location.hash.slice(1);
+if (dataStoragesOld.includes(dataStorage)) {
+    location.hash = '#' + dataStorages[dataStorage.includes('prod') ? 0 : 1];
+}
+if (dataStorage == 'redundant-devo') {
+    dataStorage = 'asins-devo';
+}
+if (!dataStorages.includes(dataStorage)) {
+    dataStorage = dataStorages[0];
+}
+[].slice.call(document.body.querySelectorAll('.nav-link'))
+    .forEach(_ => {
+        if (_.href == location.href) {
+          const activeLink = document.body.querySelector('.nav-link.active')
+          activeLink && activeLink.classList.toggle('active');
+          _.classList.toggle('active');
+        }
+    });
+
+const isDevo = location.hash.includes('devo');
+const isIndex = location.hash.includes('index');
+const retailMerchantId = isDevo ? /4105074442/ : /14311485635/;
+
 let asins;
 
 const appData = {
@@ -79,7 +84,11 @@ const appData = {
   asins: [],
   gls: [],
   isDebug: !!localStorage.isDebug,
+  isDevo: isDevo,
   isFeaturesApp: dataStorage.includes('features'),
+  isGLPage: false,
+  isIndex: isIndex,
+  prodGLs: prodGLs,
   ptds: [],
   wdgs: [],
   filters: {
@@ -186,8 +195,13 @@ Vue.component('last-modified', (resolve, reject) => {
 
 (function() {
 
-if (!dataStorage.includes('asins')) {
+if (isIndex || !dataStorage.includes('asins')) {
   return;
+}
+
+if (dataStorage.includes('gl_')) {
+  appData.isGLPage = true;
+  dataStorage = dataStorage.replace(/asins-\w+-/, (isDevo ? 'devo' : 'prod') + '/');
 }
 
 const app = new Vue({
@@ -248,7 +262,7 @@ fetch(dataStorage + '.json')
 
 (function() {
 
-if (!dataStorage.includes('features')) {
+if (isIndex || !dataStorage.includes('features')) {
   return;
 }
 
@@ -306,5 +320,23 @@ fetch(dataStorage + '.json')
         asins = data;
         app.update();
     });
+
+})();
+
+(function() {
+
+if (!isIndex) {
+  return;
+}
+
+let asins;
+
+const app = new Vue({
+  el: '#app',
+  data: appData,
+  methods: {
+    update: _ => _
+  }
+});
 
 })();
