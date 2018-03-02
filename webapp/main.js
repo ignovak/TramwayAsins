@@ -74,7 +74,7 @@ let asins;
 
 const appData = {
   columns: [],
-  host: isDevo ? 'https://tr-development.amazon.com/dp/' : 'https://tr-pre-prod.amazon.com/dp/',
+  host: isDevo ? 'https://tr-development.amazon.com/dp/' : 'https://www.amazon.com.tr/dp/',
   selectedColumns: [],
   asins: [],
   gls: [],
