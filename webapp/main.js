@@ -1,5 +1,3 @@
-addEventListener('hashchange', _ => location.reload());
-
 document.body.addEventListener('mouseover', _ => {
   if (_.target.nodeName == 'TD' && _.target.className) {
     _.target.setAttribute('title', {
@@ -15,105 +13,88 @@ const selectedColumns = new Set(
     ).map(_ => _.replace(/.*\//, ''))
 );
 
-const prodGLs = [
-  'gl_baby_product',
-  'gl_book',
-  'gl_camera',
-  'gl_electronics',
-  'gl_home',
-  'gl_home_entertainment',
-  'gl_home_improvement',
-  'gl_kitchen',
-  'gl_office_product',
-  'gl_pc',
-  'gl_personal_care_appliances',
-  'gl_sports',
-  'gl_toy',
-  'gl_video_games',
-  'gl_wireless'
-];
-
-const dataStoragesOld = [
-    'retail-prod',
-    'retail-devo',
-    '3p-devo',
-    '3p-prod'
-];
-
-const dataStorages = [
-    'asins-prod',
-    'asins-devo',
-    'features-prod',
-    'features-devo',
-    'asins-devo-old',
-    'features-devo-old'
-];
-
-dataStorages.push(...prodGLs.map(_ => 'asins-prod-' + _));
-dataStorages.push(...prodGLs.map(_ => 'asins-devo-' + _));
-
-let dataStorage = location.hash.slice(1);
-if (dataStoragesOld.includes(dataStorage)) {
-    location.hash = '#' + dataStorages[dataStorage.includes('prod') ? 0 : 1];
+switch (location.hash) { // Legacy routes
+  case '#asins-devo': location.hash = '#/asins/devo'; break;
+  case '#asins-prod': location.hash = '#/asins/prod'; break;
+  case '#features-devo': location.hash = '#/features/devo'; break;
+  case '#features-prod': location.hash = '#/features/prod'; break;
 }
-if (dataStorage == 'redundant-devo') {
-    dataStorage = 'asins-devo';
-}
-if (!dataStorages.includes(dataStorage)) {
-    dataStorage = dataStorages[0];
-}
-[].slice.call(document.body.querySelectorAll('.nav-link'))
-    .forEach(_ => {
-        if (_.href == location.href) {
-          const activeLink = document.body.querySelector('.nav-link.active')
-          activeLink && activeLink.classList.toggle('active');
-          _.classList.toggle('active');
-        }
-    });
 
-const isDevo = location.hash.includes('devo');
-const isIndex = location.hash.includes('index');
-const retailMerchantId = isDevo ? /4105074442/ : /14311485635/;
+const controller = {
+  _handlers: {
+    init: [],
+    loading: [],
+    update: []
+  },
 
-let asins;
+  _onLocationChange: function () {
+    const { type, stage, gl } = this._parseRoute(location.hash);
+    const dataSource = gl ? [stage, gl].join('/') : [type, stage].join('-');
+    this._fetch(dataSource + '.json')
+      .then(_ => this._trigger('update', {
+        data: _,
+        gl: gl,
+        isDevo: stage == 'devo',
+        isFeaturesApp: type == 'features'
+      }));
 
-const appData = {
-  columns: [],
-  host: isDevo ? 'https://tr-development.amazon.com/dp/' : 'https://www.amazon.com.tr/dp/',
-  selectedColumns: [],
-  asins: [],
-  gls: [],
-  isDebug: !!localStorage.isDebug,
-  isDevo: isDevo,
-  isFeaturesApp: dataStorage.includes('features'),
-  isGLPage: false,
-  isIndex: isIndex,
-  prodGLs: prodGLs,
-  ptds: [],
-  wdgs: [],
-  filters: {
-    features: [],
-    gl: '',
-    is3p: true,
-    isRetail: true,
-    ptd: '',
-    wdg: '',
-    text: ''
-  }
-};
+    [].slice.call(document.body.querySelectorAll('.nav-link'))
+        .forEach(_ => {
+            if (location.href.startsWith(_.href)) {
+              const activeLink = document.body.querySelector('.nav-link.active')
+              activeLink && activeLink.classList.toggle('active');
+              _.classList.toggle('active');
+            }
+        });
+  },
 
-const fetch = _ => {
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', dataStorage + '.json', true);
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState == 4) {
-        document.querySelector('.progress-card').setAttribute('hidden', true);
-        resolve(JSON.parse(xhr.responseText));
-      }
+  _parseRoute: function (route) {
+    const match = location.hash.match(/^#\/(\w+)\/(\w+)(?:\/(\w+))?/);
+    let _, type, stage, gl;
+    if (match) {
+      [_, type, stage, gl] = match;
+    } else {
+      [type, stage, gl] = ['asins', 'prod', ''];
     }
-    xhr.send();
-  })
+    return { type, stage, gl };
+  },
+
+  _buildRoute: function (type, stage, gl) {
+    return `#/${ type }/${ stage }/${ gl }`;
+  },
+
+  _trigger: function (event, data) {
+    this._handlers[event].forEach(_ => _(data));
+  },
+
+  _fetch: function (url) {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', url, true);
+      xhr.addEventListener('progress', _ => this._trigger('loading', _.loaded * 100 / _.total));
+      xhr.addEventListener('load', _ => resolve(JSON.parse(xhr.responseText)));
+      xhr.send();
+    });
+  },
+
+  init: function () {
+    addEventListener('hashchange', this._onLocationChange.bind(this));
+    const { type, stage } = this._parseRoute(location.hash);
+    this._fetch('metadata.json')
+      .then(_ => {
+        this._trigger('init', _);
+        this._onLocationChange();
+      });
+  },
+  setGL: function (newGL) {
+    const { type, stage, gl } = this._parseRoute(location.hash);
+    if (newGL != gl) {
+      location.hash = this._buildRoute(type, stage, newGL);
+    }
+  },
+  on: function (event, handler) {
+    this._handlers[event].push(handler);
+  }
 };
 
 Vue.component('asin-filter', {
@@ -193,30 +174,61 @@ Vue.component('last-modified', (resolve, reject) => {
     .catch(_ => console.log(_));
 });
 
-(function() {
-
-if (isIndex || !dataStorage.includes('asins')) {
-  return;
-}
-
-if (dataStorage.includes('gl_')) {
-  appData.isGLPage = true;
-  dataStorage = dataStorage.replace(/asins-\w+-/, (isDevo ? 'devo' : 'prod') + '/');
-}
+let asins;
 
 const app = new Vue({
   el: '#app',
-  data: appData,
+  data: {
+    columns: [],
+    features: [],
+    selectedColumns: [],
+    asins: [],
+    gl: '',
+    gls: [],
+    isDebug: !!localStorage.isDebug,
+    isDevo: false,
+    isFeaturesApp: false,
+    loadingProgress: 0,
+    ptds: [],
+    wdgs: [],
+    filters: {
+      features: [],
+      gl: '',
+      is3p: true,
+      isRetail: true,
+      ptd: '',
+      wdg: '',
+      text: ''
+    }
+  },
   methods: {
+    buildUrl: function (item) {
+      return [
+        this.isDevo ? 'https://tr-development.amazon.com/dp/' : 'https://www.amazon.com.tr/dp/',
+        item.asin,
+        this.isDebug ? '?isDebug=1&twisterCacDebug=1' : ''
+      ].join('');
+    },
     update: function() {
+      if (this.isFeaturesApp) {
+        this.asins = asins.filter(_ => (
+          (!this.filters.gl || _.gl == this.filters.gl)
+          &&
+          (!this.filters.wdg || _.wdg == this.filters.wdg)
+          &&
+          this.filters.features.every(feature => _.features.has(feature))
+        ));
+        return;
+      }
+
       this.asins = asins.filter(_ => (
         (
-          this.filters.isRetail && retailMerchantId.test(_.merchantId)
+          !this.isDevo
           ||
-          this.filters.is3p && !retailMerchantId.test(_.merchantId)
+          this.filters.isRetail && /4105074442/.test(_.merchantId)
+          ||
+          this.filters.is3p && !/4105074442/.test(_.merchantId)
         )
-        &&
-        (!this.filters.gl || _.glType == this.filters.gl)
         &&
         (!this.filters.ptd || _.productType == this.filters.ptd)
         &&
@@ -237,106 +249,49 @@ const app = new Vue({
       handler: 'update',
       deep: true
     },
+    gl: function (gl) {
+      controller.setGL(gl);
+    },
     selectedColumns: function () {
       localStorage.columns = JSON.stringify(this.selectedColumns);
     }
   }
 });
 
-fetch(dataStorage + '.json')
-    .then(_ => {
-        asins = _
-          .filter(_ => location.hash.match(/redundant/) ? !prodGLs.includes(_.glType) : prodGLs.includes(_.glType));
-
-        app.gls = [...new Set(asins.map(_ => _.glType))].sort();
-        app.ptds = [...new Set(asins.map(_ => _.productType))].sort();
-        app.wdgs = [...new Set(asins.map(_ => _.wdg))].filter(Boolean).sort();
-
-        app.columns = [...new Set([].concat(...asins.map(_ => Object.keys(_))))].sort();
-        app.selectedColumns = app.columns.filter(_ => selectedColumns.has(_));
-
-        app.update();
-    });
-
-})();
-
-(function() {
-
-if (isIndex || !dataStorage.includes('features')) {
-  return;
-}
-
-let asins;
-
-const app = new Vue({
-  el: '#app',
-  data: appData,
-  methods: {
-    update: function() {
-      this.asins = asins.filter(_ => (
-        // (
-        //   this.filters.isRetail && _.merchants.match(retailMerchantId)
-        //   ||
-        //   this.filters.is3p && _.merchants.replace(retailMerchantId, '')
-        // )
-        // &&
-        (!this.filters.gl || _.gl == this.filters.gl)
-        &&
-        (!this.filters.wdg || _.wdg == this.filters.wdg)
-        &&
-        this.filters.features.every(feature => _.features.has(feature))
-      ));
-    }
-  },
-  watch: {
-    filters: {
-      handler: 'update',
-      deep: true
-    }
-  }
+controller.on('init', _ => {
+  app.columns = _.columns;
+  app.features = _.features;
+  app.gls = _.gls;
+  app.ptds = _.ptds;
+  app.wdgs = _.wdgs;
+  app.selectedColumns = app.columns.filter(_ => selectedColumns.has(_));
 });
 
-fetch(dataStorage + '.json')
-    .then(_ => {
-        const data = _.filter(_ => prodGLs.includes(_.gl)) // TODO: move to data generation step
-        data.forEach(_ => {
-          _.features = new Set(
-              _.features.map(
-                _ => _
-                    .replace(/.*product-description/, 'productDescription')
-                    .replace(/detail-bullets/, 'detail_bullets')
-              )
-            );
-        });
-        const columns = new Set([].concat(...data.map(_ => [..._.features])));
-        columns.delete('hero-quick-promo-grid');
-        columns.delete('product-alert-grid');
-        columns.delete('qpe-title-tag');
-        app.columns = [...columns].sort();
-
-        app.gls = [...new Set(data.map(_ => _.gl))].sort();
-        app.wdgs = [...new Set(data.map(_ => _.wdg))].filter(Boolean).sort();
-
-        asins = data;
-        app.update();
-    });
-
-})();
-
-(function() {
-
-if (!isIndex) {
-  return;
-}
-
-let asins;
-
-const app = new Vue({
-  el: '#app',
-  data: appData,
-  methods: {
-    update: _ => _
-  }
+controller.on('loading', _ => {
+  app.loadingProgress = _;
 });
 
-})();
+controller.on('update', _ => {
+  let data = _.data;
+  if (_.isFeaturesApp) {
+    data = data.filter(_ => app.gls.includes(_.gl)) // TODO: move to data generation step
+    data.forEach(_ => {
+      _.features = new Set(
+        _.features.map(
+          _ => _
+            .replace(/.*product-description/, 'productDescription')
+            .replace(/detail-bullets/, 'detail_bullets')
+        )
+      );
+    });
+  }
+
+  asins = data;
+  app.gl = _.gl;
+  app.isDevo = _.isDevo;
+  app.isFeaturesApp = _.isFeaturesApp;
+  app.loadingProgress = 0;
+  app.update();
+});
+
+controller.init();

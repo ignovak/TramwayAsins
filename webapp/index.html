@@ -18,32 +18,26 @@
 
     <ul class="nav nav-tabs">
         <li class="nav-item">
-            <a class="nav-link" href="#asins-prod">Prod ASINs</a>
+            <a class="nav-link active" href="#/asins/prod">Prod ASINs</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#asins-devo">Devo ASINs</a>
+            <a class="nav-link" href="#/asins/devo">Devo ASINs</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#features-prod">Prod features</a>
+            <a class="nav-link" href="#/features/prod">Prod features</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#features-devo">Devo features</a>
+            <a class="nav-link" href="#/features/devo">Devo features</a>
         </li>
         <!-- <li class="nav-item"> -->
-        <!--     <a class="nav-link" href="#asins-devo-old">Old Devo ASINs</a> -->
+        <!--     <a class="nav-link" href="#redundant-devo">Redundant ASINs</a> -->
         <!-- </li> -->
-        <!-- <li class="nav-item"> -->
-        <!--     <a class="nav-link" href="#features-devo-old">Old Devo features</a> -->
-        <!-- </li> -->
-        <li class="nav-item">
-            <a class="nav-link" href="#redundant-devo">Redundant ASINs</a>
-        </li>
         <li class="nav-item ml-auto">
             <last-modified></last-modified>
         </li>
     </ul>
 
-    <div v-if="!isIndex" class="card-body">
+    <div class="card-body">
         <div class="bg-light mb-3 p-3">
             <div class="row">
                 <div class="col-6">
@@ -64,7 +58,16 @@
                         </div>
                     </div>
 
-                    <asin-filter v-if="!isGLPage" v-model="filters.gl" :data="gls" :title="'Filter by GL'"></asin-filter>
+                    <asin-filter v-if="!isFeaturesApp" v-model="gl" :data="gls" :title="'Filter by GL'"></asin-filter>
+                    <div v-if="!isFeaturesApp && !gl && asins.length" class="form-group row" style="margin-top: -1rem">
+                      <div class="col-3"></div>
+                      <div class="col-9">
+                        <small class="text-muted">Some ASINs are hidden from the list. To see them, select particular GL.</small>
+                      </div>
+                    </div>
+
+                    <asin-filter v-if="isFeaturesApp" v-model="filters.gl" :data="gls" :title="'Filter by GL'"></asin-filter>
+
                     <asin-filter v-if="!isFeaturesApp" v-model="filters.ptd" :data="ptds" :title="'Filter by Product Type'"></asin-filter>
                     <asin-filter v-model="filters.wdg" :data="wdgs" :title="'Filter by WDG'"></asin-filter>
 
@@ -93,10 +96,6 @@
                 </div>
             </div>
 
-            <h5 v-if="!isFeaturesApp && !isGLPage">
-                Important: The ASIN list is not complete, please check the full one on <a v-bind:href="'#asins-' + (isDevo ? 'devo' : 'prod') + '-index'">GL index page</a>
-            </h5>
-
         </div>
 
         <details v-if="!isFeaturesApp">
@@ -111,66 +110,57 @@
             </div>
         </details>
 
-        <table v-if="!isFeaturesApp" class="table table-hover">
+        <table v-if="!isFeaturesApp" v-show="!loadingProgress" class="table table-hover">
             <thead class="thead-default">
                 <tr>
                     <th>#</th>
                     <th v-for="column in selectedColumns">{{ column }}</th>
                 </tr>
             </thead>
-            <tr v-for="(asin, index) in asins">
+            <tr v-for="(item, index) in asins">
                 <th>{{ index + 1 }}</th>
                 <td v-for="column in selectedColumns">
                     <template v-if="column == 'asin'">
-                        <a v-bind:href="host + asin[column] + (isDebug ? '?isDebug=1&twisterCacDebug=1' : '')">{{ asin[column] }}</a>
+                        <a v-bind:href="buildUrl(item)">{{ item.asin }}</a>
                     </template>
-                    <template v-else>{{ asin[column] }}</template>
+                    <template v-else>{{ item[column] }}</template>
                 </td>
             </tr>
         </table>
 
-        <table v-if="isFeaturesApp" class="table table-hover table-bordered">
+        <table v-if="isFeaturesApp" v-show="!loadingProgress" class="table table-hover table-bordered">
             <thead class="thead-default text-capitalize">
                 <tr>
                     <th>#</th>
                     <th>ASIN</th>
                     <th>GL</th>
                     <th>WDG</th>
-                    <!-- <th>merch</th> -->
-                    <th v-for="column in columns" class="text-center">
+                    <th v-for="feature in features" class="text-center">
                         <label>
-                            <input type="checkbox" v-bind:value="column" v-model="filters.features" v-on:change="update">
-                            {{ column }}
+                            <input type="checkbox" v-bind:value="feature" v-model="filters.features" v-on:change="update">
+                            {{ feature }}
                         </label>
                     </th>
 
                 </tr>
             </thead>
-            <tr v-for="(asin, index) in asins">
+            <tr v-for="(item, index) in asins">
                 <th>{{ index + 1 }}</th>
-                <td><a v-bind:href="host + asin.asin + (isDebug ? '?isDebug=1&twisterCacDebug=1' : '')">{{ asin.asin }}</a></td>
-                <td>{{ asin.gl }}</td>
-                <td>{{ asin.wdg }}</td>
-                <!-- <td>{{ asin.merchants }}</td> -->
+                <td><a v-bind:href="buildUrl(item)">{{ item.asin }}</a></td>
+                <td>{{ item.gl }}</td>
+                <td>{{ item.wdg }}</td>
                 <td
-                    v-for="column in columns"
-                    v-bind:class="{ 'bg-success': asin.features.has(column), 'bg-warning': !asin.features.has(column) }">
+                    v-for="feature in features"
+                    v-bind:class="{ 'bg-success': item.features.has(feature), 'bg-warning': !item.features.has(feature) }">
                 </td>
             </tr>
         </table>
     </div>
 
-    <div v-if="!isIndex" class="card-body progress-card">
+    <div v-show="loadingProgress" class="card-body progress-card">
         <div class="progress">
-            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 50%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" v-bind:style="'width: ' + loadingProgress + '%'" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
         </div>
-    </div>
-
-    <div v-if="isIndex" class="card-body">
-        <h3>GL index</h3>
-        <ul>
-          <li v-for="gl in prodGLs"><a v-bind:href="'#asins-' + (isDevo ? 'devo' : 'prod') + '-' + gl">{{ gl }}</a></li>
-        </ul>
     </div>
 
 </div>
