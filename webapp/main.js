@@ -71,7 +71,7 @@ const controller = {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.open('GET', url, true);
-      xhr.addEventListener('progress', _ => this._trigger('loading', _.loaded * 100 / _.total));
+      xhr.addEventListener('progress', _ => this._trigger('loading', _.loaded * 100 / (_.total || this.urls && this.urls[url])));
       xhr.addEventListener('load', _ => resolve(JSON.parse(xhr.responseText)));
       xhr.send();
     });
@@ -83,6 +83,7 @@ const controller = {
     this._fetch('metadata.json')
       .then(_ => {
         this._trigger('init', _);
+        this.urls = _.urls;
         this._onLocationChange();
       });
   },
