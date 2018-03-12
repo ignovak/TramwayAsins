@@ -32,8 +32,10 @@
         <!-- <li class="nav-item"> -->
         <!--     <a class="nav-link" href="#redundant-devo">Redundant ASINs</a> -->
         <!-- </li> -->
-        <li class="nav-item ml-auto">
-            <last-modified></last-modified>
+        <li v-if="lastModified" class="nav-item ml-auto">
+          <div class="nav-link active">
+            Data is updated: <em>{{ lastModified }}</em>
+          </div>
         </li>
     </ul>
 

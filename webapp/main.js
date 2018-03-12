@@ -145,36 +145,6 @@ Vue.component('is-debug', {
   `
 });
 
-Vue.component('last-modified', (resolve, reject) => {
-  new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', 'update_date', true);
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4) {
-          if (xhr.status == 200) {
-            resolve(xhr.responseText);
-          } else {
-            reject(xhr.statusText);
-          }
-        }
-      }
-      xhr.send();
-    })
-    .then(_ => {
-      if (localStorage.updateDate != _) {
-        localStorage.updateDate = _;
-      }
-      resolve({
-        template: `
-          <div class="nav-link active">
-            Data is updated: <em>${ _ }</em>
-          </div>
-        `
-      })
-    })
-    .catch(_ => console.log(_));
-});
-
 let asins;
 
 const app = new Vue({
@@ -189,6 +159,7 @@ const app = new Vue({
     isDebug: !!localStorage.isDebug,
     isDevo: false,
     isFeaturesApp: false,
+    lastModified: '',
     loadingProgress: 0,
     ptds: [],
     wdgs: [],
@@ -263,6 +234,7 @@ controller.on('init', _ => {
   app.columns = _.columns;
   app.features = _.features;
   app.gls = _.gls;
+  app.lastModified = _.lastModified;
   app.ptds = _.ptds;
   app.wdgs = _.wdgs;
   app.selectedColumns = app.columns.filter(_ => selectedColumns.has(_));
