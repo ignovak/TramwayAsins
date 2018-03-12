@@ -166,7 +166,7 @@ Vue.component('last-modified', (resolve, reject) => {
       }
       resolve({
         template: `
-          <div class="nav-link">
+          <div class="nav-link active">
             Data is updated: <em>${ _ }</em>
           </div>
         `
