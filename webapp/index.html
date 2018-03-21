@@ -73,8 +73,9 @@
 
                     <asin-filter v-if="!isFeaturesApp" v-model="filters.ptd" :data="ptds" :title="'Filter by Product Type'"></asin-filter>
                     <asin-filter v-model="filters.wdg" :data="wdgs" :title="'Filter by WDG'"></asin-filter>
+                    <asin-filter v-if="!isFeaturesApp" v-model="filters.condition" :data="conditions" :title="'Filter by Condition'"></asin-filter>
 
-                    <div v-if="!isFeaturesApp" class="form-group row">
+                    <div v-if="!isFeaturesApp" class="form-group row" hidden>
                         <label for="text-filter" class="col-3 col-form-label">Filter by Title and Brand name</label>
                         <div class="col-9">
                             <input class="form-control" id="text-filter" placeholder="Type text..." v-model="filters.text" v-on:input="update">

@@ -151,6 +151,7 @@ const app = new Vue({
   el: '#app',
   data: {
     columns: [],
+    conditions: ['New', 'Used', 'Collectible', 'Refurbished', 'Club'],
     features: [],
     selectedColumns: [],
     asins: [],
@@ -164,6 +165,7 @@ const app = new Vue({
     ptds: [],
     wdgs: [],
     filters: {
+      condition: '',
       features: [],
       gl: '',
       is3p: true,
@@ -206,7 +208,10 @@ const app = new Vue({
         &&
         (!this.filters.wdg || _.wdg == this.filters.wdg)
         &&
+        (!this.filters.condition || _.condition == this.filters.condition)
+        &&
         (
+          true ||
           !this.filters.text
           ||
           _.title.toLowerCase().includes(this.filters.text)
