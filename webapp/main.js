@@ -163,6 +163,7 @@ const app = new Vue({
     lastModified: '',
     loadingProgress: 0,
     ptds: [],
+    retailMerchantId: 0,
     wdgs: [],
     filters: {
       condition: '',
@@ -197,11 +198,9 @@ const app = new Vue({
 
       this.asins = asins.filter(_ => (
         (
-          !this.isDevo
+          this.filters.isRetail && _.merchantId == this.retailMerchantId
           ||
-          this.filters.isRetail && /4105074442/.test(_.merchantId)
-          ||
-          this.filters.is3p && !/4105074442/.test(_.merchantId)
+          this.filters.is3p && _.merchantId != this.retailMerchantId
         )
         &&
         (!this.filters.ptd || _.productType == this.filters.ptd)
@@ -271,6 +270,7 @@ controller.on('update', _ => {
   app.isDevo = _.isDevo;
   app.isFeaturesApp = _.isFeaturesApp;
   app.loadingProgress = 0;
+  app.retailMerchantId = _.isDevo ? 4105074442 : 14311485635;
   app.update();
 });
 
