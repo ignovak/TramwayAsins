@@ -112,7 +112,12 @@ Vue.component('asin-filter', {
       <div class="col-9">
         <select class="custom-select" :id="id" :value="value" @change="$emit('change', $event.target.value)">
           <option selected></option>
-          <option v-for="item in data" v-bind:value="item">{{ item }}</option>
+          <option
+            v-for="item in data"
+            v-bind:value="item && typeof item === 'object' ? item.value : item"
+            >
+            {{ item && typeof item === 'object' ? item.key : item }}
+          </option>
         </select>
       </div>
     </div>
@@ -162,15 +167,14 @@ const app = new Vue({
     isFeaturesApp: false,
     lastModified: '',
     loadingProgress: 0,
+    merchants: [],
     ptds: [],
-    retailMerchantId: 0,
     wdgs: [],
     filters: {
       condition: '',
       features: [],
       gl: '',
-      is3p: true,
-      isRetail: true,
+      merchant: '',
       ptd: '',
       wdg: '',
       text: ''
@@ -197,11 +201,7 @@ const app = new Vue({
       }
 
       this.asins = asins.filter(_ => (
-        (
-          this.filters.isRetail && _.merchantId == this.retailMerchantId
-          ||
-          this.filters.is3p && _.merchantId != this.retailMerchantId
-        )
+        (!this.filters.merchant || _.merchantId == this.filters.merchant)
         &&
         (!this.filters.ptd || _.productType == this.filters.ptd)
         &&
@@ -270,7 +270,17 @@ controller.on('update', _ => {
   app.isDevo = _.isDevo;
   app.isFeaturesApp = _.isFeaturesApp;
   app.loadingProgress = 0;
-  app.retailMerchantId = _.isDevo ? 4105074442 : 14311485635;
+  app.merchants = _.isDevo ?
+    [
+      { key: 'Retail: 4105074442', value: 4105074442 },
+      { key: '3P: 6419942412', value: 6419942412 },
+      { key: '3P: 5742415112', value: 5742415112 }
+    ] :
+    [
+      { key: 'Retail: 14311485635', value: 14311485635 },
+      { key: '3P: 11482866512', value: 11482866512 },
+      { key: '3P: 20904560812', value: 20904560812 }
+    ];
   app.update();
 });
 

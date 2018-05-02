@@ -46,20 +46,7 @@
                 <div class="col-6">
                     <h5 class="card-subtitle">Filters</h5>
 
-                    <div v-if="!isFeaturesApp" class="form-group row">
-                        <div class="col-12">
-                            <div class="form-check form-check-inline">
-                                <label class="form-check-label">
-                                    <input class="form-check-input" type="checkbox" v-model="filters.isRetail" v-on:change="update"> Retail ASINs
-                                </label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <label class="form-check-label">
-                                    <input class="form-check-input" type="checkbox" v-model="filters.is3p" v-on:change="update"> 3P ASINs
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+                    <asin-filter v-if="!isFeaturesApp" v-model="filters.merchant" :data="merchants" :title="'Filter by merchant'"></asin-filter>
 
                     <asin-filter v-if="!isFeaturesApp" v-model="gl" :data="gls" :title="'Filter by GL'"></asin-filter>
                     <div v-if="!isFeaturesApp && !gl && asins.length" class="form-group row" style="margin-top: -1rem">
