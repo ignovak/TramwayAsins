@@ -1,3 +1,7 @@
+if (location.href.startsWith('https')) {
+  location.href = location.href.replace(/^https/, 'http');
+}
+
 document.body.addEventListener('mouseover', _ => {
   if (_.target.nodeName == 'TD' && _.target.className) {
     _.target.setAttribute('title', {
