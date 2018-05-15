@@ -17,6 +17,9 @@ const selectedColumns = new Set(
     ).map(_ => _.replace(/.*\//, ''))
 );
 
+window.jsonData = [];
+window.loadJson = _ => jsonData.push(_);
+
 switch (location.hash) { // Legacy routes
   case '#asins-devo': location.hash = '#/asins/devo'; break;
   case '#asins-prod': location.hash = '#/asins/prod'; break;
@@ -73,11 +76,11 @@ const controller = {
 
   _fetch: function (url) {
     return new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', url, true);
-      xhr.addEventListener('progress', _ => this._trigger('loading', _.loaded * 100 / (_.total || this.urls && this.urls[url])));
-      xhr.addEventListener('load', _ => resolve(JSON.parse(xhr.responseText)));
-      xhr.send();
+      const script = document.createElement('script');
+      script.src = 'http://novakin.aka.corp.amazon.com:8567/' + url.replace(/json$/, 'js');
+      script.addEventListener('load', _ => resolve(window.jsonData.pop()));
+      this._trigger('loading', 100);
+      document.body.appendChild(script);
     });
   },
 
