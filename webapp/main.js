@@ -247,8 +247,6 @@ controller.on('init', _ => {
   app.ptds = _.ptds;
   app.wdgs = _.wdgs;
   app.selectedColumns = app.columns.filter(_ => selectedColumns.has(_));
-
-  document.head.querySelector('[rel$=icon]').href += ('?' + Math.random());
 });
 
 controller.on('loading', _ => {
