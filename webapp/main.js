@@ -17,9 +17,6 @@ const selectedColumns = new Set(
     ).map(_ => _.replace(/.*\//, ''))
 );
 
-window.jsonData = [];
-window.loadJson = _ => jsonData.push(_);
-
 switch (location.hash) { // Legacy routes
   case '#asins-devo': location.hash = '#/asins/devo'; break;
   case '#asins-prod': location.hash = '#/asins/prod'; break;
@@ -77,8 +74,9 @@ const controller = {
   _fetch: function (url) {
     return new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = 'http://novakin.aka.corp.amazon.com:8567/' + url.replace(/json$/, 'js');
-      script.addEventListener('load', _ => resolve(window.jsonData.pop()));
+      const callback = 'callback' + +new Date + (Math.random() * 1000).toFixed();
+      script.src = 'http://novakin.aka.corp.amazon.com:8567/' + url + '?callback=' + callback;
+      window[callback] = _ => resolve(_);
       this._trigger('loading', 100);
       document.body.appendChild(script);
     });
