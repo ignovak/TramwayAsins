@@ -170,9 +170,12 @@ const app = new Vue({
     isDebug: !!localStorage.isDebug,
     isDevo: false,
     isFeaturesApp: false,
+    itemsPerPage: 2000,
     lastModified: '',
     loadingProgress: 0,
     merchants: [],
+    page: 0,
+    pageNum: 0,
     ptds: [],
     wdgs: [],
     filters: {
@@ -194,6 +197,7 @@ const app = new Vue({
       ].join('');
     },
     update: function() {
+      this.page = 0;
       if (this.isFeaturesApp) {
         this.asins = asins.filter(_ => (
           (!this.filters.gl || _.gl == this.filters.gl)
@@ -202,9 +206,7 @@ const app = new Vue({
           &&
           this.filters.features.every(feature => _.features.has(feature))
         ));
-        return;
-      }
-
+      } else {
       this.asins = asins.filter(_ => (
         (!this.filters.merchant || _.merchantId == this.filters.merchant)
         &&
@@ -223,6 +225,8 @@ const app = new Vue({
           (_.brandName || '').toLowerCase().includes(this.filters.text)
         )
       ));
+      }
+      this.pageNum = Math.ceil(this.asins.length / this.itemsPerPage);
     }
   },
   watch: {

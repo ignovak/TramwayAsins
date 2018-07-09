@@ -109,8 +109,8 @@
                     <th v-for="column in selectedColumns">{{ column }}</th>
                 </tr>
             </thead>
-            <tr v-for="(item, index) in asins">
-                <th>{{ index + 1 }}</th>
+            <tr v-for="(item, index) in asins.slice(page * itemsPerPage, (page + 1) * itemsPerPage)">
+                <th>{{ (page * itemsPerPage) + index + 1 }}</th>
                 <td v-for="column in selectedColumns">
                     <template v-if="column == 'asin'">
                         <a v-bind:href="buildUrl(item)">{{ item.asin }}</a>
@@ -136,8 +136,8 @@
 
                 </tr>
             </thead>
-            <tr v-for="(item, index) in asins">
-                <th>{{ index + 1 }}</th>
+            <tr v-for="(item, index) in asins.slice(page * itemsPerPage, (page + 1) * itemsPerPage)">
+                <th>{{ (page * itemsPerPage) + index + 1 }}</th>
                 <td><a v-bind:href="buildUrl(item)">{{ item.asin }}</a></td>
                 <td>{{ item.gl }}</td>
                 <td>{{ item.wdg }}</td>
@@ -154,6 +154,18 @@
             <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" v-bind:style="'width: ' + loadingProgress + '%'" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
         </div>
     </div>
+
+    <ul v-show="!loadingProgress && pageNum > 1" class="pagination justify-content-center">
+      <li :class="['page-item', page == 0 ? 'disabled' : '']">
+        <a class="page-link" :href="location.hash" @click="page--">«</a>
+      </li>
+      <li v-for="(_, i) in [...Array(pageNum)]" :class="['page-item', page == i ? 'disabled' : '']">
+        <a class="page-link" :href="location.hash" @click="page = i">{{ i + 1 }}</a>
+      </li>
+      <li :class="['page-item', page == pageNum - 1 ? 'disabled' : '']">
+        <a class="page-link" :href="location.hash" @click="page = page + 1">»</a>
+      </li>
+    </ul>
 
 </div>
 
