@@ -1,6 +1,7 @@
-### Source code for the static website [sapp/TramwayAsins](https://sapp.amazon.com/TramwayAsins) hosting ASIN data for Tramway project
+### Source code for the static website hosting ASIN data for Tramway project
 
 ### Usage
 ```
-./fetch_data.sh <api_key>
+python3 -m http.server
+open http://localhost:8000/webapp
 ```

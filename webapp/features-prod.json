@@ -1,0 +1,282 @@
+[
+{
+"asin": "0000000000", 
+"features": [
+"tellAFriendBylineBox", 
+"buybox", 
+"1click", 
+"booksImageBlock", 
+"averageCustomerReviews", 
+"dynamicDeliveryMessage", 
+"olp", 
+"cpsia-product-safety-warning", 
+"detail_bullets"
+], 
+"gl": "gl_book", 
+"wdg": "book"
+}, 
+{
+"asin": "0001052330", 
+"features": [
+"tellAFriendBylineBox", 
+"buybox", 
+"1click", 
+"booksImageBlock", 
+"averageCustomerReviews", 
+"dynamicDeliveryMessage", 
+"olp", 
+"detail_bullets"
+], 
+"gl": "gl_book", 
+"wdg": "book"
+}, 
+{
+"asin": "0201379694", 
+"features": [
+"tellAFriendBylineBox", 
+"booksImageBlock", 
+"averageCustomerReviews", 
+"olp", 
+"detail_bullets"
+], 
+"gl": "gl_book", 
+"wdg": "book"
+}, 
+{
+"asin": "0857231510", 
+"features": [
+"tellAFriendBox", 
+"buybox", 
+"1click", 
+"imageBlock", 
+"title", 
+"averageCustomerReviews", 
+"unifiedPrice", 
+"availability", 
+"dynamicDeliveryMessage", 
+"olp"
+], 
+"gl": "gl_sports", 
+"wdg": "sports"
+}, 
+{
+"asin": "0939290138", 
+"features": [
+"tellAFriendBox", 
+"buybox", 
+"1click", 
+"imageBlock", 
+"title", 
+"brandByline", 
+"averageCustomerReviews", 
+"unifiedPrice", 
+"availability", 
+"dynamicDeliveryMessage", 
+"olp", 
+"featurebullets", 
+"product-description", 
+"productDescription", 
+"productDescription"
+], 
+"gl": "gl_office_product", 
+"wdg": "office_product"
+}, 
+{
+"asin": "0975533037", 
+"features": [
+"tellAFriendBox", 
+"buybox", 
+"1click", 
+"imageBlock", 
+"title", 
+"brandByline", 
+"averageCustomerReviews", 
+"unifiedPrice", 
+"availability", 
+"dynamicDeliveryMessage", 
+"olp", 
+"featurebullets", 
+"cpsia-product-safety-warning", 
+"productDescription", 
+"productDescription"
+], 
+"gl": "gl_toy", 
+"wdg": "toy"
+}, 
+{
+"asin": "1590411153", 
+"features": [
+"tellAFriendBox", 
+"buybox", 
+"1click", 
+"imageBlock", 
+"title", 
+"brandByline", 
+"averageCustomerReviews", 
+"unifiedPrice", 
+"availability", 
+"dynamicDeliveryMessage", 
+"olp", 
+"featurebullets"
+], 
+"gl": "gl_toy", 
+"wdg": "toy"
+}, 
+{
+"asin": "161661191X", 
+"features": [
+"tellAFriendBylineBox", 
+"buybox", 
+"1click", 
+"booksImageBlock", 
+"averageCustomerReviews", 
+"dynamicDeliveryMessage", 
+"olp", 
+"bookDescription", 
+"cpsia-product-safety-warning", 
+"productDescription", 
+"productDescription", 
+"detail_bullets"
+], 
+"gl": "gl_toy", 
+"wdg": "home"
+}, 
+{
+"asin": "1633250822", 
+"features": [
+"tellAFriendBox", 
+"buybox", 
+"1click", 
+"imageBlock", 
+"title", 
+"brandByline", 
+"averageCustomerReviews", 
+"unifiedPrice", 
+"availability", 
+"dynamicDeliveryMessage", 
+"olp", 
+"productDescription", 
+"productDescription"
+], 
+"gl": "gl_office_product", 
+"wdg": "office_product"
+}, 
+{
+"asin": "1682082903", 
+"features": [
+"tellAFriendBox", 
+"buybox", 
+"1click", 
+"imageBlock", 
+"title", 
+"brandByline", 
+"averageCustomerReviews", 
+"unifiedPrice", 
+"availability", 
+"dynamicDeliveryMessage", 
+"olp", 
+"productDescription", 
+"productDescription"
+], 
+"gl": "gl_office_product", 
+"wdg": "baby_product"
+}, 
+{
+"asin": "1784753254", 
+"features": [
+"tellAFriendBylineBox", 
+"buybox", 
+"1click", 
+"booksImageBlock", 
+"averageCustomerReviews", 
+"dynamicDeliveryMessage", 
+"olp", 
+"detail_bullets"
+], 
+"gl": "gl_book", 
+"wdg": "book"
+}, 
+{
+"asin": "1934006564", 
+"features": [
+"tellAFriendBox", 
+"buybox", 
+"1click", 
+"imageBlock", 
+"title", 
+"brandByline", 
+"averageCustomerReviews", 
+"unifiedPrice", 
+"availability", 
+"dynamicDeliveryMessage", 
+"olp", 
+"productDescription", 
+"productDescription"
+], 
+"gl": "gl_pc", 
+"wdg": "pc"
+}, 
+{
+"asin": "2742942416", 
+"features": [
+"tellAFriendBox", 
+"buybox", 
+"1click", 
+"imageBlock", 
+"title", 
+"brandByline", 
+"averageCustomerReviews", 
+"unifiedPrice", 
+"availability", 
+"dynamicDeliveryMessage", 
+"olp", 
+"featurebullets", 
+"productDescription", 
+"productDescription", 
+"detail_bullets"
+], 
+"gl": "gl_office_product", 
+"wdg": "book"
+}, 
+{
+"asin": "3362635466", 
+"features": [], 
+"gl": "gl_home", 
+"wdg": "home"
+}, 
+{
+"asin": "3898871428", 
+"features": [], 
+"gl": "gl_video_games", 
+"wdg": "video_games"
+}, 
+{
+"asin": "3898871649", 
+"features": [], 
+"gl": "gl_video_games", 
+"wdg": "video_games"
+}, 
+{
+"asin": "3898872459", 
+"features": [], 
+"gl": "gl_video_games", 
+"wdg": "video_games"
+}, 
+{
+"asin": "4298001210", 
+"features": [
+"tellAFriendBylineBox", 
+"buybox", 
+"1click", 
+"booksImageBlock", 
+"averageCustomerReviews", 
+"dynamicDeliveryMessage", 
+"olp", 
+"productDescription", 
+"productDescription", 
+"detail_bullets"
+], 
+"gl": "gl_electronics", 
+"wdg": "office_product"
+}
+]

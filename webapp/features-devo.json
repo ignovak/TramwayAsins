@@ -1,0 +1,172 @@
+[
+{
+"asin": "0071809252", 
+"features": [
+"wayfinding-breadcrumbs", 
+"tellAFriendBylineBox", 
+"booksImageBlock", 
+"averageCustomerReviews", 
+"olp", 
+"productDescription", 
+"productDescription", 
+"detail_bullets"
+], 
+"gl": "gl_book", 
+"wdg": "book"
+}, 
+{
+"asin": "013209990X", 
+"features": [
+"wayfinding-breadcrumbs", 
+"tellAFriendBylineBox", 
+"buybox", 
+"1click", 
+"booksImageBlock", 
+"qpeTitleTag", 
+"averageCustomerReviews", 
+"dynamicDeliveryMessage", 
+"olp", 
+"detail_bullets"
+], 
+"gl": "gl_book", 
+"wdg": "book"
+}, 
+{
+"asin": "014241543X", 
+"features": [
+"wayfinding-breadcrumbs", 
+"tellAFriendBylineBox", 
+"buybox", 
+"1click", 
+"booksImageBlock", 
+"averageCustomerReviews", 
+"applicablePromotionList", 
+"dynamicDeliveryMessage", 
+"olp", 
+"bookDescription", 
+"productDescription", 
+"productDescription", 
+"detail_bullets"
+], 
+"gl": "gl_book", 
+"wdg": "book"
+}, 
+{
+"asin": "064692690X", 
+"features": [
+"tellAFriendBox", 
+"buybox", 
+"1click", 
+"imageBlock", 
+"title", 
+"brandByline", 
+"averageCustomerReviews", 
+"unifiedPrice", 
+"availability", 
+"dynamicDeliveryMessage", 
+"featurebullets", 
+"cpsia-product-safety-warning", 
+"productDescription", 
+"productDescription"
+], 
+"gl": "gl_toy", 
+"wdg": "toy"
+}, 
+{
+"asin": "3103972636", 
+"features": [
+"wayfinding-breadcrumbs", 
+"tellAFriendBylineBox", 
+"buybox", 
+"1click", 
+"booksImageBlock", 
+"averageCustomerReviews", 
+"dynamicDeliveryMessage", 
+"olp", 
+"bookDescription", 
+"productDescription", 
+"productDescription", 
+"detail_bullets"
+], 
+"gl": "gl_book", 
+"wdg": "book"
+}, 
+{
+"asin": "3351036825", 
+"features": [
+"tellAFriendBylineBox", 
+"buybox", 
+"1click", 
+"booksImageBlock", 
+"averageCustomerReviews", 
+"dynamicDeliveryMessage", 
+"olp", 
+"bookDescription", 
+"productDescription", 
+"productDescription", 
+"detail_bullets"
+], 
+"gl": "gl_book", 
+"wdg": "book"
+}, 
+{
+"asin": "3423050012", 
+"features": [
+"wayfinding-breadcrumbs", 
+"tellAFriendBylineBox", 
+"buybox", 
+"1click", 
+"booksImageBlock", 
+"averageCustomerReviews", 
+"dynamicDeliveryMessage", 
+"olp", 
+"productDescription", 
+"productDescription", 
+"detail_bullets"
+], 
+"gl": "gl_book", 
+"wdg": "book"
+}, 
+{
+"asin": "3664095847", 
+"features": [
+"wayfinding-breadcrumbs", 
+"dpx-books-ppd", 
+"tellAFriendBylineBox", 
+"buybox", 
+"1click", 
+"moreBuyingChoices", 
+"booksImageBlock", 
+"averageCustomerReviews", 
+"dynamicDeliveryMessage", 
+"olp", 
+"reader-lightbox", 
+"detail-bullets", 
+"browse", 
+"detail_bullets"
+], 
+"gl": "gl_book", 
+"wdg": "book"
+}, 
+{
+"asin": "3664095855", 
+"features": [
+"wayfinding-breadcrumbs", 
+"dpx-books-ppd", 
+"tellAFriendBylineBox", 
+"buybox", 
+"1click", 
+"moreBuyingChoices", 
+"booksImageBlock", 
+"averageCustomerReviews", 
+"dynamicDeliveryMessage", 
+"olp", 
+"reader-lightbox", 
+"detail-bullets", 
+"browse", 
+"detail_bullets"
+], 
+"gl": "gl_book", 
+"wdg": "book"
+}
+]

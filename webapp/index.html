@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <title>ASIN browser</title>
-<link rel="stylesheet" href="bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 <style>
   .bg-success, .bg-warning {
     opacity: .5;
@@ -13,6 +13,9 @@
   }
   .table label input {
     transform: rotate(180deg) translate(5px);
+  }
+  .table thead th {
+    background: #dee2e6;
   }
 </style>
 
@@ -49,6 +52,7 @@
 
                     <asin-filter v-if="!isFeaturesApp" v-model="filters.merchant" :data="merchants" :title="'Filter by merchant'"></asin-filter>
 
+                    <!--
                     <asin-filter v-if="!isFeaturesApp" v-model="gl" :data="gls" :title="'Filter by GL'"></asin-filter>
                     <div v-if="!isFeaturesApp && !gl && asins.length" class="form-group row" style="margin-top: -1rem">
                       <div class="col-3"></div>
@@ -56,6 +60,7 @@
                         <small class="text-muted">Some ASINs are hidden from the list. To see them, select particular GL.</small>
                       </div>
                     </div>
+                    -->
 
                     <asin-filter v-if="isFeaturesApp" v-model="filters.gl" :data="gls" :title="'Filter by GL'"></asin-filter>
 
@@ -169,5 +174,5 @@
 
 </div>
 
-<script src="vue.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.min.js"></script>
 <script src="main.js"></script>

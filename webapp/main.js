@@ -73,12 +73,11 @@ const controller = {
 
   _fetch: function (url) {
     return new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      const callback = 'callback' + +new Date + (Math.random() * 1000).toFixed();
-      script.src = 'http://novakin.aka.corp.amazon.com:8567/' + url + '?callback=' + callback;
-      window[callback] = _ => resolve(_);
-      this._trigger('loading', 100);
-      document.body.appendChild(script);
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', url, true);
+      xhr.addEventListener('progress', _ => this._trigger('loading', _.loaded * 100 / (_.total || this.urls && this.urls[url])));
+      xhr.addEventListener('load', _ => resolve(JSON.parse(xhr.responseText)));
+      xhr.send();
     });
   },
 
@@ -191,7 +190,7 @@ const app = new Vue({
   methods: {
     buildUrl: function (item) {
       return [
-        this.isDevo ? 'https://tr-development.amazon.com/dp/' : 'https://www.amazon.com.tr/dp/',
+        this.isDevo ? 'https://de-development.amazon.com/dp/' : 'https://www.amazon.de/dp/',
         item.asin,
         this.isDebug ? '?isDebug=1&twisterCacDebug=1' : ''
       ].join('');
